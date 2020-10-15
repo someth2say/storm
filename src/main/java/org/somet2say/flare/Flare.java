@@ -13,6 +13,9 @@ import org.somet2say.flare.serialization.SerializationUtils;
 
 import io.quarkus.runtime.QuarkusApplication;
 import io.quarkus.runtime.annotations.QuarkusMain;
+import picocli.CommandLine;
+import picocli.CommandLine.ParameterException;
+import picocli.CommandLine.ParseResult;
 
 @QuarkusMain
 public class Flare implements QuarkusApplication {
@@ -20,8 +23,26 @@ public class Flare implements QuarkusApplication {
     @Inject
     Configuration configuration;
 
+    @Inject
+    CommandLine.IFactory factory;
+
     @Override
     public int run(String... args) throws Exception {
+        try {
+            ParseResult parseResults = new CommandLine(configuration, factory).parseArgs(args);
+            if (!parseResults.errors().isEmpty()){
+                System.err.println(parseResults.errors());
+                return -1;
+            }
+        } catch (ParameterException e) {
+            System.err.println(e.getLocalizedMessage());
+            return -1;
+        }
+
+        return main();
+    }
+
+    public int main() throws Exception {
 
         System.out.println(SerializationUtils.toYAML(configuration));
 
@@ -41,7 +62,6 @@ public class Flare implements QuarkusApplication {
 
     private void executeRequests(Bucket rootBucket) throws InterruptedException {
         ForkJoinPool pool = new ForkJoinPool(configuration.threads);
-        System.out.println("Pool size: " + pool.getParallelism());
         Collection<ForkJoinTask<ResponseData<String>>> fjTasks = new HashSet<>();
         for (int exec = 0; exec < configuration.repeat; exec++) {
             Task task = new Task(rootBucket, configuration);

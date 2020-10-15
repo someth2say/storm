@@ -4,15 +4,21 @@ import java.net.URI;
 import java.util.Collections;
 import java.util.List;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.somet2say.flare.stats.Stats;
 
 import io.quarkus.arc.config.ConfigProperties;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
+import picocli.CommandLine;
 
 @ConfigProperties(prefix = "flare")
-public class Configuration {
+@CommandLine.Command(mixinStandardHelpOptions = true)
+@ApplicationScoped
+public class Configuration  { 
 
     @Option(names = { "-t", "--threads" }, description = "How many worker threads use")
     public int threads=10;
@@ -23,7 +29,7 @@ public class Configuration {
     @Option(names = { "-o", "--order" }, description = "Strategy for picking the next URL from the list")
     public Order order = Order.random;
 
-    @Parameters(index = "0", description = "Target URI for the requests")
+    @Parameters(index = "0..*", description = "Target URI for the requests")
     public List<URI> urls;
 
     @Option(names = { "-c", "--categorizers" }, description = "Categorizers to use to split response data.")
