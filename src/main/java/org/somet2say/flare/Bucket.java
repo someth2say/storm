@@ -31,7 +31,7 @@ public class Bucket {
     public Map<Object, Bucket> buckets = new HashMap<>();
 
     public Bucket(final Configuration configuration) {
-        this.stats = Stats.buildStats(configuration.getStats());
+        this.stats = Stats.buildStats(configuration.stats);
     }
 
 
@@ -61,7 +61,7 @@ public class Bucket {
     }
 
     private void categorize(final int catIdx, final Configuration configuration) {
-        List<String> categorizers2 = configuration.getCategorizers();
+        List<String> categorizers2 = configuration.categorizers;
         // 1.- Get categories
         if (catIdx < categorizers2.size()) {
             final Categorizer categorizer = Categorizers.buildCategorizer(categorizers2.get(catIdx));

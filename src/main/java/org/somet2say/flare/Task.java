@@ -90,15 +90,15 @@ final class Task implements Callable<ResponseData<String>> {
 	}
 
 	private URI getNextURL() {
-		final List<URI> urls = configuration.getUrls();
+		final List<URI> urls = configuration.urls;
 		int index;
 		int nextCounter = requestCounter.getAndIncrement();
-		switch (configuration.getOrder()) {
+		switch (configuration.order) {
 			case roundrobin:
 				 index = nextCounter % urls.size();
 				 break;
 			case sequential:
-				 double step = ((double)configuration.getRepeat() / urls.size());
+				 double step = ((double)configuration.repeat / urls.size());
 				 index = (int)(nextCounter / step);
 				 break;
 			default:

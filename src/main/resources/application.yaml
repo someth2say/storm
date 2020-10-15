@@ -2,17 +2,17 @@ flare:
   urls:
     - http://metaphorpsum.com/paragraphs/1/1
 #    - http://httpbin.org/status/400
-  order: random # or sequential or roundrobin
+#  order: random # or sequential or roundrobin
 #  order: sequential
 #  order: roundrobin
-  threads: 10
-  repeat: 10
-# categorizers:
+#  threads: 10
+#  repeat: 10
+#  categorizers:
 #    - httpcode
 #    - regexpmatch(.*( (a|the) ).*)
 #    - fullbody
-  stats:
-    - count
+#  stats:
+#    - count
 #    - time
-    - duration
+#    - duration
 
