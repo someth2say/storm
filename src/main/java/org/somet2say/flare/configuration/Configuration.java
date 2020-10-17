@@ -16,7 +16,7 @@ import picocli.CommandLine.Parameters;
 import picocli.CommandLine;
 
 @ConfigProperties(prefix = "flare")
-@CommandLine.Command(mixinStandardHelpOptions = true)
+@CommandLine.Command(mixinStandardHelpOptions = true, version="TO BE IMPORTED FROM POM")
 @ApplicationScoped
 public class Configuration  { 
 
@@ -24,12 +24,12 @@ public class Configuration  {
     public int threads=10;
 
     @Option(names = { "-r", "--repeat" }, description = "How many times execute the request")
-    public int repeat=1;
+    public int repeat=10;
 
-    @Option(names = { "-o", "--order" }, description = "Strategy for picking the next URL from the list")
+    @Option(names = { "-o", "--order" }, description = "Strategy for picking the next URL from the list.")
     public Order order = Order.random;
 
-    @Parameters(index = "0..*", description = "Target URI for the requests")
+    @Parameters(index = "0..*", description = "Target URIs for the requests")
     public List<URI> urls;
 
     @Option(names = { "-c", "--categorizers" }, description = "Categorizers to use to split response data.")

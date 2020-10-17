@@ -5,7 +5,10 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public enum Stats {
-    COUNT(CountStat::new), DURATION(DurationStat::new), TIME(TimeStat::new);
+    COUNT(CountStat::new), 
+    DURATION(DurationStat::new), 
+    TIME(TimeStat::new),
+    HEADERS(HeadersStat::new);
 
     private Supplier<Stat> supplier;
 

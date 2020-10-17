@@ -1,18 +1,25 @@
+quarkus:
+  log:
+    level: WARNING
+
 flare:
   urls:
     - http://metaphorpsum.com/paragraphs/1/1
-#    - http://httpbin.org/status/400
+    - http://httpbin.org/status/400
 #  order: random # or sequential or roundrobin
 #  order: sequential
 #  order: roundrobin
 #  threads: 10
 #  repeat: 10
-#  categorizers:
+  categorizers:
 #    - httpcode
 #    - regexpmatch(.*( (a|the) ).*)
 #    - fullbody
-#  stats:
+    - header(server)
+#    - URL
+  stats:
 #    - count
 #    - time
 #    - duration
+    - headers
 

@@ -29,11 +29,21 @@ public class Flare implements QuarkusApplication {
     @Override
     public int run(String... args) throws Exception {
         try {
-            ParseResult parseResults = new CommandLine(configuration, factory).parseArgs(args);
+            CommandLine commandLine = new CommandLine(configuration, factory);
+            ParseResult parseResults = commandLine.parseArgs(args);
             if (!parseResults.errors().isEmpty()){
                 System.err.println(parseResults.errors());
                 return -1;
             }
+            if (commandLine.isUsageHelpRequested()) {
+                commandLine.usage(System.out);
+                return 0;
+             } else if (commandLine.isVersionHelpRequested()) {
+                commandLine.printVersionHelp(System.out);
+                return 0;
+             }
+             
+
         } catch (ParameterException e) {
             System.err.println(e.getLocalizedMessage());
             return -1;

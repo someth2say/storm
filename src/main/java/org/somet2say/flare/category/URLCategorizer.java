@@ -4,15 +4,14 @@ import java.util.Optional;
 
 import org.somet2say.flare.ResponseData;
 
-public class FullBodyCategorizer implements Categorizer {
+public class URLCategorizer implements Categorizer {
 
     @Override
     public Optional<String> getCategoryFor(ResponseData<String> responseData) {
-        if (responseData.response != null) {
-            return Optional.of(responseData.response.body());
-        } else {
+        if (responseData.response != null)
+            return Optional.of(responseData.response.uri().toString());
+        else
             return Optional.empty();
-        }
     }
 
 }

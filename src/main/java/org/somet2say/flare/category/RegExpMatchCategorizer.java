@@ -16,11 +16,15 @@ public class RegExpMatchCategorizer implements Categorizer {
 
     @Override
     public Optional<String> getCategoryFor(final ResponseData<String> responseData) {
-        Matcher matcher = pattern.matcher(responseData.response.body());
-        if (matcher.matches()){
-            return Optional.of(matcher.group(1));
-        } 
-        else return Optional.of("!"+pattern.toString());
+        if (responseData.response != null) {
+            Matcher matcher = pattern.matcher(responseData.response.body());
+            if (matcher.matches()) {
+                return Optional.of(matcher.group(1));
+            } else
+                return Optional.of("!" + pattern.toString());
+        } else {
+            return Optional.empty();
+        }
     }
-    
+
 }

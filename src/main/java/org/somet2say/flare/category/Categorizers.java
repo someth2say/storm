@@ -10,7 +10,9 @@ import java.util.stream.Collectors;
 public enum Categorizers {
     FULLBODY(FullBodyCategorizer::new), 
     REGEXPMATCH(RegExpMatchCategorizer::new), 
-    HTTPCODE(HttpCodeCategorizer::new);
+    HTTPCODE(HttpCodeCategorizer::new),
+    HEADER(HeaderCategorizer::new),
+    URL(URLCategorizer::new);
 
     private Supplier<Categorizer> supplier;
     private Function<String, Categorizer> function;

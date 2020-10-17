@@ -8,7 +8,10 @@ public class HttpCodeCategorizer implements Categorizer {
 
     @Override
     public Optional<String> getCategoryFor(final ResponseData<String> responseData) {
-        return Optional.of(Integer.toString(responseData.response.statusCode()));
+        if (responseData.response != null)
+            return Optional.of(Integer.toString(responseData.response.statusCode()));
+        else
+            return Optional.empty();
     }
-    
+
 }
