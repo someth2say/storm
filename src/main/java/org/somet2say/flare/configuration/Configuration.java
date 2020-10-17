@@ -5,17 +5,15 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.somet2say.flare.stats.Stats;
 
 import io.quarkus.arc.config.ConfigProperties;
+import picocli.CommandLine;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
-import picocli.CommandLine;
 
-@ConfigProperties(prefix = "flare")
+@ConfigProperties(prefix = "storm")
 @CommandLine.Command(mixinStandardHelpOptions = true, version="TO BE IMPORTED FROM POM")
 @ApplicationScoped
 public class Configuration  { 

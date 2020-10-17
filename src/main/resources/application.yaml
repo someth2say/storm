@@ -2,7 +2,7 @@ quarkus:
   log:
     level: WARNING
 
-flare:
+storm:
   urls:
     - http://metaphorpsum.com/paragraphs/1/1
     - http://httpbin.org/status/400
@@ -14,12 +14,12 @@ flare:
   categorizers:
 #    - httpcode
 #    - regexpmatch(.*( (a|the) ).*)
-#    - fullbody
-    - header(server)
-#    - URL
+#    - body
+#    - header(server)
+    - URL
   stats:
-#    - count
+    - count
 #    - time
-#    - duration
-    - headers
+    - duration
+#    - headers
 

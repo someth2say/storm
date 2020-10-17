@@ -2,7 +2,7 @@ package org.somet2say.flare.stats;
 
 import java.time.Instant;
 
-import org.somet2say.flare.Bucket;
+import org.somet2say.flare.Category;
 import org.somet2say.flare.ResponseData;
 
 public class TimeStat implements Stat {
@@ -11,13 +11,13 @@ public class TimeStat implements Stat {
     public Instant endTime = Instant.MIN;
 
     @Override
-    public synchronized void computeStep(Bucket bucket, ResponseData<String> responseData) {
+    public synchronized void computeStep(Category bucket, ResponseData<String> responseData) {
         startTime = responseData.startTime.isBefore(startTime) ? responseData.startTime : startTime;
         endTime = responseData.endTime.isAfter(endTime) ? responseData.endTime : endTime;
     }
 
     @Override
-    public void computeEnd(Bucket bucket) {
+    public void computeEnd(Category bucket) {
     }
 
     @Override

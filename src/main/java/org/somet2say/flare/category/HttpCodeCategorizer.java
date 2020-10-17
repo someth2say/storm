@@ -14,4 +14,10 @@ public class HttpCodeCategorizer implements Categorizer {
             return Optional.empty();
     }
 
+
+    @Override
+    public String toString() {
+        return "httpCode";
+    }
+
 }

@@ -4,11 +4,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.somet2say.flare.Bucket;
+import org.somet2say.flare.Category;
 import org.somet2say.flare.ResponseData;
 
 public interface Categorizer {
-    default List<String> getCategories(final Bucket bucket) {
+    default List<String> getCategories(final Category bucket) {
         return bucket.responseDatas.stream()
         .map(this::getCategoryFor)
         .flatMap(Optional::stream)

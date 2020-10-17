@@ -19,4 +19,9 @@ public class HeaderCategorizer implements Categorizer {
     public HeaderCategorizer(String headerKey) {
         this.headerKey = headerKey;
     }
+
+    @Override
+    public String toString() {
+        return headerKey;
+    }
 }

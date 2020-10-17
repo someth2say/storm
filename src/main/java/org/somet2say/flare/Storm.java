@@ -18,7 +18,7 @@ import picocli.CommandLine.ParameterException;
 import picocli.CommandLine.ParseResult;
 
 @QuarkusMain
-public class Flare implements QuarkusApplication {
+public class Storm implements QuarkusApplication {
 
     @Inject
     Configuration configuration;
@@ -57,7 +57,7 @@ public class Flare implements QuarkusApplication {
         System.out.println(SerializationUtils.toYAML(configuration));
 
         // 0.- Prepare inputs
-        Bucket rootBucket = new Bucket(configuration);
+        Category rootBucket = new Category(configuration);
 
         // 1.- Execute all tasks and gather independent stats.
         executeRequests(rootBucket);
@@ -70,7 +70,7 @@ public class Flare implements QuarkusApplication {
         return 0;
     }
 
-    private void executeRequests(Bucket rootBucket) throws InterruptedException {
+    private void executeRequests(Category rootBucket) throws InterruptedException {
         ForkJoinPool pool = new ForkJoinPool(configuration.threads);
         Collection<ForkJoinTask<ResponseData<String>>> fjTasks = new HashSet<>();
         for (int exec = 0; exec < configuration.repeat; exec++) {

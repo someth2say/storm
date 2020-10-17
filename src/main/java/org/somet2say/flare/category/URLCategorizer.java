@@ -14,4 +14,9 @@ public class URLCategorizer implements Categorizer {
             return Optional.empty();
     }
 
+    @Override
+    public String toString() {
+        return "url";
+    }
+
 }

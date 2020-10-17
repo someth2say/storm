@@ -7,9 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedDeque;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -22,18 +19,17 @@ import org.somet2say.flare.stats.Stat;
 import org.somet2say.flare.stats.Stats;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class Bucket {
+public class Category {
     @JsonIgnore
     public final Deque<ResponseData<String>> responseDatas = new ConcurrentLinkedDeque<>();
 
     public final Collection<Stat> stats;
 
-    public Map<Object, Bucket> buckets = new HashMap<>();
+    public Map<Object, Category> categories = new HashMap<>();
 
-    public Bucket(final Configuration configuration) {
+    public Category(final Configuration configuration) {
         this.stats = Stats.buildStats(configuration.stats);
     }
-
 
     public void addResponse(final ResponseData<String> responseData) {
         // 1.- Update stats
@@ -61,47 +57,58 @@ public class Bucket {
     }
 
     private void categorize(final int catIdx, final Configuration configuration) {
-        List<String> categorizers2 = configuration.categorizers;
+        List<String> categorizers = configuration.categorizers;
         // 1.- Get categories
-        if (catIdx < categorizers2.size()) {
-            final Categorizer categorizer = Categorizers.buildCategorizer(categorizers2.get(catIdx));
+        if (catIdx < categorizers.size()) {
+            final Categorizer categorizer = Categorizers.buildCategorizer(categorizers.get(catIdx));
 
-            final List<String> categories = categorizer.getCategories(this);
+            final List<String> subcategories = categorizer.getCategories(this);
 
             // 2.- Create buckets per category
-            categories.forEach(cat -> this.buckets.put(cat, new Bucket(configuration)));
+            subcategories.forEach(
+                    cat -> this.categories.put(buildCategoryKey(categorizer, cat), new Category(configuration)));
 
             // 3.- Add each response to the new bucket.
             addResponsesToBuckets(categorizer, configuration);
 
             // 4.- Recursivelly categorize each new bucket;
-            if (catIdx + 1 < categorizers2.size()) {
-                buckets.values().forEach(bucket -> bucket.categorize(catIdx + 1, configuration));
+            if (catIdx + 1 < categorizers.size()) {
+                categories.values().forEach(bucket -> bucket.categorize(catIdx + 1, configuration));
             }
         }
     }
 
     private void addResponsesToBuckets(final Categorizer categorizer, final Configuration configuration) {
-        while (!responseDatas.isEmpty()) {
-            final ResponseData<String> responseData = responseDatas.pop();
+
+        responseDatas.forEach((responseData) -> {
             final Optional<String> optKey = categorizer.getCategoryFor(responseData);
 
             if (optKey.isPresent()) {
-                final String key = optKey.get();
-
-                Bucket bucket;
-                if (buckets.containsKey(key)) {
-                    bucket = buckets.get(key);
-                } else {
+                String key = buildCategoryKey(categorizer, optKey.get());
+                Category subcategory = categories.computeIfAbsent(key, k -> {
                     System.out.println("WARNING: Inconsistency. Categorizer " + categorizer.getClass().getSimpleName()
-                            + " provided a category for a response that was not foreseen: " + key);
-                    bucket = buckets.put(key, new Bucket(configuration));
-                }
+                            + " provided a category for a response that was not foreseen: " + k);
+                    return new Category(configuration);
+                });
 
-                bucket.addResponse(responseData);
+                // if (categories.containsKey(key)) {
+                // subcategory = categories.get(key);
+                // } else {
+                // System.out.println("WARNING: Inconsistency. Categorizer " +
+                // categorizer.getClass().getSimpleName()
+                // + " provided a category for a response that was not foreseen: " + key);
+                // subcategory = new Category(configuration);
+                // categories.put(key, subcategory);
+                // }
+                subcategory.addResponse(responseData);
             }
-        }
+        });
+
         // Once all responses are added, updat stats
-        buckets.values().forEach(b -> b.stats.forEach(s -> s.computeEnd(b)));
+        categories.values().forEach(category -> category.stats.forEach(stat -> stat.computeEnd(category)));
+    }
+
+    private String buildCategoryKey(final Categorizer categorizer, final String key) {
+        return categorizer.toString() + "=" + (key != null ? key : "~");
     }
 }

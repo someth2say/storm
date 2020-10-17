@@ -19,12 +19,17 @@ public class RegExpMatchCategorizer implements Categorizer {
         if (responseData.response != null) {
             Matcher matcher = pattern.matcher(responseData.response.body());
             if (matcher.matches()) {
-                return Optional.of(matcher.group(1));
+                return Optional.of("true");
             } else
-                return Optional.of("!" + pattern.toString());
+                return Optional.of("false");
         } else {
             return Optional.empty();
         }
+    }
+
+    @Override
+    public String toString() {
+        return pattern.toString();
     }
 
 }

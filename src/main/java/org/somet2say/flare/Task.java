@@ -22,11 +22,11 @@ import org.somet2say.flare.configuration.Configuration;
 final class Task implements Callable<ResponseData<String>> {
 
 	private Configuration configuration;
-	private Bucket bucket;
+	private Category bucket;
 	private static AtomicInteger requestCounter = new AtomicInteger();
 
 
-	public Task(final Bucket rootBucket, final Configuration configuration) {
+	public Task(final Category rootBucket, final Configuration configuration) {
 		this.bucket = rootBucket;
 		this.configuration = configuration;
 	}

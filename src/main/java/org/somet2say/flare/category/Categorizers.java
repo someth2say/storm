@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public enum Categorizers {
-    FULLBODY(FullBodyCategorizer::new), 
+    BODY(BodyCategorizer::new), 
     REGEXPMATCH(RegExpMatchCategorizer::new), 
     HTTPCODE(HttpCodeCategorizer::new),
     HEADER(HeaderCategorizer::new),
