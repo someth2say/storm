@@ -1,0 +1,9 @@
+- Duration stats
+- Duration histogram
+- Proper loggin
+- Compact lists
+- Relative count
+- Relative duration
+- proxy
+- pre-build clients
+- better category key generation

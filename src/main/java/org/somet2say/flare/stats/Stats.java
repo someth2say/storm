@@ -6,7 +6,8 @@ import java.util.stream.Collectors;
 
 public enum Stats {
     COUNT(CountStat::new), 
-    DURATION(DurationStat::new), 
+    DURATIONSUM(DurationSumStat::new),
+    DURATIONSTATS(DurationStatsStat::new), 
     TIME(TimeStat::new),
     HEADERS(HeadersStat::new);
 

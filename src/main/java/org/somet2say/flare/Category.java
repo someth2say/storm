@@ -2,7 +2,7 @@ package org.somet2say.flare;
 
 import java.util.Collection;
 import java.util.Deque;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -25,7 +25,7 @@ public class Category {
 
     public final Collection<Stat> stats;
 
-    public Map<Object, Category> categories = new HashMap<>();
+    public Map<Object, Category> categories = new LinkedHashMap<>();
 
     public Category(final Configuration configuration) {
         this.stats = Stats.buildStats(configuration.stats);
@@ -90,16 +90,6 @@ public class Category {
                             + " provided a category for a response that was not foreseen: " + k);
                     return new Category(configuration);
                 });
-
-                // if (categories.containsKey(key)) {
-                // subcategory = categories.get(key);
-                // } else {
-                // System.out.println("WARNING: Inconsistency. Categorizer " +
-                // categorizer.getClass().getSimpleName()
-                // + " provided a category for a response that was not foreseen: " + key);
-                // subcategory = new Category(configuration);
-                // categories.put(key, subcategory);
-                // }
                 subcategory.addResponse(responseData);
             }
         });

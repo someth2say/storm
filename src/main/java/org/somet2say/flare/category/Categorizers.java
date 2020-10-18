@@ -12,7 +12,8 @@ public enum Categorizers {
     REGEXPMATCH(RegExpMatchCategorizer::new), 
     HTTPCODE(HttpCodeCategorizer::new),
     HEADER(HeaderCategorizer::new),
-    URL(URLCategorizer::new);
+    URL(URLCategorizer::new),
+    DURATIONHISTOGRAM(DurationHistogramCategorizer::new);
 
     private Supplier<Categorizer> supplier;
     private Function<String, Categorizer> function;
