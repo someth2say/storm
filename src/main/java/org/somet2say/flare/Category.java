@@ -21,13 +21,17 @@ import org.somet2say.flare.stats.Stats;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class Category {
     @JsonIgnore
+    public final Category parent;
+
+    @JsonIgnore
     public final Deque<ResponseData<String>> responseDatas = new ConcurrentLinkedDeque<>();
 
     public final Collection<Stat> stats;
 
     public Map<Object, Category> categories = new LinkedHashMap<>();
 
-    public Category(final Configuration configuration) {
+    public Category(final Configuration configuration, final Category parent) {
+        this.parent = parent;
         this.stats = Stats.buildStats(configuration.stats);
     }
 
@@ -40,11 +44,7 @@ public class Category {
     }
 
     private void updateStats(final ResponseData<String> response) {
-        // stats.addStats(response.stats);
-
-        // newStats
         stats.forEach(s -> s.computeStep(this, response));
-
     }
 
     @Override
@@ -66,10 +66,10 @@ public class Category {
 
             // 2.- Create buckets per category
             subcategories.forEach(
-                    cat -> this.categories.put(buildCategoryKey(categorizer, cat), new Category(configuration)));
+                    cat -> this.categories.put(buildCategoryKey(categorizer, cat), new Category(configuration, this)));
 
             // 3.- Add each response to the new bucket.
-            addResponsesToBuckets(categorizer, configuration);
+            addResponsesToChildCategories(categorizer, configuration);
 
             // 4.- Recursivelly categorize each new bucket;
             if (catIdx + 1 < categorizers.size()) {
@@ -78,7 +78,7 @@ public class Category {
         }
     }
 
-    private void addResponsesToBuckets(final Categorizer categorizer, final Configuration configuration) {
+    private void addResponsesToChildCategories(final Categorizer categorizer, final Configuration configuration) {
 
         responseDatas.forEach((responseData) -> {
             final Optional<String> optKey = categorizer.getCategoryFor(responseData);
@@ -88,14 +88,18 @@ public class Category {
                 Category subcategory = categories.computeIfAbsent(key, k -> {
                     System.out.println("WARNING: Inconsistency. Categorizer " + categorizer.getClass().getSimpleName()
                             + " provided a category for a response that was not foreseen: " + k);
-                    return new Category(configuration);
+                    return new Category(configuration, this);
                 });
                 subcategory.addResponse(responseData);
             }
         });
 
-        // Once all responses are added, updat stats
-        categories.values().forEach(category -> category.stats.forEach(stat -> stat.computeEnd(category)));
+        // Once all responses are added, update stats
+        categories.values().forEach(category -> category.finalizeStats());
+    }
+
+    public void finalizeStats() {
+        stats.forEach(stat -> stat.computeEnd(this));
     }
 
     private String buildCategoryKey(final Categorizer categorizer, final String key) {

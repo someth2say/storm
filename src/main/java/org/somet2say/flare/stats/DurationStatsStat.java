@@ -36,7 +36,6 @@ public class DurationStatsStat implements Stat {
                     .sum();
             stdev = Math.sqrt(variance / numResponses);
         }
-
     }
 
     @Override

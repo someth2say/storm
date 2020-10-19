@@ -1,4 +1,4 @@
-- Duration stats: confidence intervals
+- config sanity checks
 - Time histogram
 - Proper logging
 - Compact lists
@@ -7,3 +7,4 @@
 - proxy
 - pre-build clients
 - better category key generation
+- Duration stats: confidence intervals
