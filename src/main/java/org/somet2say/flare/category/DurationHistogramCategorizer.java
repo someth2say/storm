@@ -38,8 +38,6 @@ public class DurationHistogramCategorizer implements Categorizer {
 
     public List<String> getCategories(final Category bucket) {
         calculateSlices(bucket);
-
-        //return slices.stream().map(Duration::toString).collect(Collectors.toList());
         return slices2.stream().map(Pair::toString).collect(Collectors.toList());
     }
 
@@ -47,7 +45,7 @@ public class DurationHistogramCategorizer implements Categorizer {
         var minDuration = Duration.ofSeconds(Long.MAX_VALUE, 0);
         var maxDuration = Duration.ZERO;
         for (ResponseData<String> responseData : bucket.responseDatas) {
-            var duration = Duration.between(responseData.startTime, responseData.endTime);
+            var duration = responseData.getDuration();
             minDuration = (duration.compareTo(minDuration) < 0) ? duration : minDuration;
             maxDuration = (duration.compareTo(maxDuration) > 0) ? duration : maxDuration;
         }
@@ -68,9 +66,7 @@ public class DurationHistogramCategorizer implements Categorizer {
     @Override
     public Optional<String> getCategoryFor(ResponseData<String> responseData) {
         if (responseData.response != null) {
-            var duration = Duration.between(responseData.startTime, responseData.endTime);
-            // return slices.stream().filter(slice -> slice.compareTo(duration) >=
-            // 0).map(Duration::toString).findFirst();
+            var duration = responseData.getDuration(); 
             return slices2.stream().filter(slice -> sliceContains(slice, duration)).map(Pair::toString).findFirst();
         } else {
             return Optional.empty();

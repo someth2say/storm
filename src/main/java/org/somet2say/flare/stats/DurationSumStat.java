@@ -11,7 +11,7 @@ public class DurationSumStat implements Stat {
 
     @Override
     public synchronized void computeStep(Category bucket, ResponseData<String> responseData) {
-        durationsum = durationsum.plus(Duration.between(responseData.startTime, responseData.endTime));
+        durationsum = durationsum.plus(responseData.getDuration());//Duration.between(responseData.startTime, responseData.endTime));
     }
 
     @Override

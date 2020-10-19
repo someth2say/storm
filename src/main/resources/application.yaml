@@ -23,5 +23,5 @@ storm:
 #    - time
 #    - durationsum
 #    - headers
-#    - durationstats
+    - durationstats
 

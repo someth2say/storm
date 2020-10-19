@@ -1,6 +1,6 @@
-- Duration stats
-- Duration histogram
-- Proper loggin
+- Duration stats: confidence intervals
+- Time histogram
+- Proper logging
 - Compact lists
 - Relative count
 - Relative duration

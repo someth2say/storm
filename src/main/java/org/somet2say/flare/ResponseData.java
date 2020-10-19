@@ -1,6 +1,7 @@
 package org.somet2say.flare;
 
 import java.net.http.HttpResponse;
+import java.time.Duration;
 import java.time.Instant;
 
 public class ResponseData<T> {
@@ -16,6 +17,11 @@ public class ResponseData<T> {
         this.startTime = startTime;
         this.endTime = endTime;
         this.exception = exception;
-	}
+    }
+    
+    public Duration getDuration(){
+        return Duration.between(startTime, endTime);
+    }
+
 
 }
