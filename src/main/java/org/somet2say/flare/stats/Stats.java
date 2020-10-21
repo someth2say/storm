@@ -5,6 +5,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public enum Stats {
+    URL(URLStat::new),
     COUNT(CountStat::new), 
     RELATIVECOUNT(RelativeCountStat::new),
     DURATIONSUM(DurationSumStat::new),

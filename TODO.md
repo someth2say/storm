@@ -1,10 +1,10 @@
 - config sanity checks
 - Time histogram->requests per second
 - Proper logging
-- Compact lists
-- Relative count
+- Proper testing
 - Relative duration
 - proxy
 - pre-build clients
 - better category key generation
 - Duration stats: confidence intervals
+- stats: URLs in a category

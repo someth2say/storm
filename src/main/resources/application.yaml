@@ -17,12 +17,13 @@ storm:
 #    - body
 #    - header(server)
 #    - URL
-    - durationhistogram(2)
+    - durationhistogram(5)
   stats:
+    - url
     - count
 #    - relativecount
 #    - time
 #    - durationsum
 #    - headers
-    - durationstats
+#    - durationstats
 
