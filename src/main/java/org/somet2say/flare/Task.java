@@ -19,12 +19,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.somet2say.flare.configuration.Configuration;
 
+import io.quarkus.runtime.annotations.ConfigGroup;
+
 final class Task implements Callable<ResponseData<String>> {
 
 	private Configuration configuration;
 	private Category bucket;
 	private static AtomicInteger requestCounter = new AtomicInteger();
-
 
 	public Task(final Category rootBucket, final Configuration configuration) {
 		this.bucket = rootBucket;
@@ -42,6 +43,11 @@ final class Task implements Callable<ResponseData<String>> {
 
 		bucket.addResponse(responseData);
 
+		if (this.configuration.delay > 0) {
+			try {
+				Thread.sleep(this.configuration.delay);
+			} catch (InterruptedException e) {}
+		}
 		return responseData;
 	}
 

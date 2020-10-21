@@ -5,6 +5,8 @@ import java.util.Comparator;
 
 public class InstantComparator implements Comparator<Instant> {
 
+    public static InstantComparator INSTANCE = new InstantComparator();
+
     @Override
     public int compare(Instant o1, Instant o2) {
         int cmp = Long.compare(o1.getEpochSecond(), o2.getEpochSecond());

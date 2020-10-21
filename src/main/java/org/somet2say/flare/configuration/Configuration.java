@@ -38,6 +38,9 @@ public class Configuration {
     @Option(names = { "-s", "--stats" }, description = "Stats generated for each category bucket.")
     public List<String> stats = List.of(Stats.COUNT.name());
 
+    @Option(names = { "-d", "--delay" }, description = "Delay time after a response")
+    public int delay = 0;
+
     @JsonIgnore
     @Option(names = { "--dumpConfig" }, description = "Prints the current configuration file and exits")
     public boolean dumpConfig=false;

@@ -13,7 +13,8 @@ public enum Categorizers {
     HTTPCODE(HttpCodeCategorizer::new),
     HEADER(HeaderCategorizer::new),
     URL(URLCategorizer::new),
-    DURATIONHISTOGRAM(DurationHistogramCategorizer::new);
+    DURATIONHISTOGRAM(DurationHistogramCategorizer::new),
+    TIMEHISTOGRAM(TimeHistogramCategorizer::new);
 
     private Supplier<Categorizer> supplier;
     private Function<String, Categorizer> function;

@@ -3,6 +3,8 @@ package org.somet2say.flare;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
 import java.util.concurrent.TimeUnit;
@@ -83,12 +85,15 @@ public class Storm implements QuarkusApplication {
     }
 
     private void executeRequests(Category rootBucket) throws InterruptedException {
-        ForkJoinPool pool = new ForkJoinPool(configuration.threads);
-        Collection<ForkJoinTask<ResponseData<String>>> fjTasks = new HashSet<>();
+        //ForkJoinPool pool = new ForkJoinPool(configuration.threads);
+        
+        ExecutorService pool = Executors.newFixedThreadPool(configuration.threads);
+        //Collection<ForkJoinTask<ResponseData<String>>> fjTasks = new HashSet<>();
         for (int exec = 0; exec < configuration.repeat; exec++) {
             Task task = new Task(rootBucket, configuration);
-            var fjTask = pool.submit(task);
-            fjTasks.add(fjTask);
+            //var fjTask = 
+            pool.submit(task);
+            //fjTasks.add(fjTask);
         }
         pool.shutdown();
         pool.awaitTermination(30, TimeUnit.SECONDS);
