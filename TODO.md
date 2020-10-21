@@ -1,5 +1,5 @@
 - config sanity checks
-- Time histogram->requests per second
+- Use Picocli as MicroProfile Config source
 - Proper logging
 - Proper testing
 - Relative duration

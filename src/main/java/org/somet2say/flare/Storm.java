@@ -1,17 +1,15 @@
 package org.somet2say.flare;
 
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.ForkJoinTask;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validator;
 
-import org.eclipse.microprofile.config.spi.ConfigSourceProvider;
 import org.somet2say.flare.category.Categorizers;
 import org.somet2say.flare.configuration.Configuration;
 import org.somet2say.flare.serialization.SerializationUtils;
@@ -19,11 +17,6 @@ import org.somet2say.flare.stats.Stats;
 
 import io.quarkus.runtime.QuarkusApplication;
 import io.quarkus.runtime.annotations.QuarkusMain;
-import io.quarkus.runtime.configuration.ConfigUtils;
-import io.quarkus.runtime.configuration.QuarkusConfigFactory;
-import io.smallrye.config.SmallRyeConfig;
-import io.smallrye.config.SmallRyeConfigBuilder;
-import io.smallrye.config.SmallRyeConfigFactory;
 import picocli.CommandLine;
 import picocli.CommandLine.ParameterException;
 import picocli.CommandLine.ParseResult;
@@ -33,6 +26,9 @@ public class Storm implements QuarkusApplication {
 
     @Inject
     Configuration configuration;
+
+    @Inject
+    Validator validator;
 
     @Inject
     CommandLine.IFactory factory;
@@ -46,6 +42,13 @@ public class Storm implements QuarkusApplication {
                 System.err.println(parseResults.errors());
                 return -1;
             }
+
+            Set<ConstraintViolation<Configuration>> violations = validator.validate(configuration);
+            if (!violations.isEmpty()){
+                violations.stream().map(v->v.getPropertyPath()+" "+v.getMessage()).forEach(System.err::println);
+                return -1;
+            }
+
             if (commandLine.isUsageHelpRequested()) {
                 commandLine.usage(System.out);
                 System.out.println();

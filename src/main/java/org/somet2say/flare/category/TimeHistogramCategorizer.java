@@ -3,6 +3,7 @@ package org.somet2say.flare.category;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -41,8 +42,10 @@ public class TimeHistogramCategorizer implements Categorizer {
     }
 
     private void calculateSlices(final Category bucket) {
-        if (bucket.responseDatas.isEmpty())
+        if (bucket.responseDatas.isEmpty()) {
+            slices = Collections.emptyList();
             return;
+        }
 
         Instant startTime = bucket.responseDatas.stream().map(rd->rd.endTime).min(InstantComparator.INSTANCE).orElse(Instant.EPOCH);
         Instant endTime =  bucket.responseDatas.stream().map(rd->rd.endTime).max(InstantComparator.INSTANCE).orElse(Instant.EPOCH);

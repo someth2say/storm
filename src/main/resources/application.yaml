@@ -3,14 +3,14 @@ quarkus:
     level: WARNING
 
 storm:
-  urls:
+  urls: 
     - http://metaphorpsum.com/paragraphs/1/1
     - http://httpbin.org/status/400
 #  order: random # or sequential or roundrobin
 #  order: sequential
 #  order: roundrobin
-  threads: 10
-  repeat: 100
+  threads: 1
+  repeat: 10
 #  delay: 100
   categorizers:
 #    - httpcode
