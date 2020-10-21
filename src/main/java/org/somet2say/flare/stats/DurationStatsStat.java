@@ -33,8 +33,8 @@ public class DurationStatsStat implements Stat {
                     .collect(Collectors.toList());
             mean = durations.stream().reduce(Duration.ZERO, (d1, d2) -> d1.plus(d2)).dividedBy(numResponses);
             variance = durations.stream().mapToLong(d -> d.toMillis()).map(m -> m - mean.toMillis()).map(m -> m * m)
-                    .sum();
-            stdev = Math.sqrt(variance / numResponses);
+                    .sum()/1000;
+            stdev = Math.sqrt(variance / numResponses*1.0);
         }
     }
 

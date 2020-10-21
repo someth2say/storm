@@ -20,6 +20,7 @@ storm:
     - durationhistogram(2)
   stats:
     - count
+#    - relativecount
 #    - time
 #    - durationsum
 #    - headers

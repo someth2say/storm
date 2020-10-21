@@ -1,5 +1,5 @@
 - config sanity checks
-- Time histogram
+- Time histogram->requests per second
 - Proper logging
 - Compact lists
 - Relative count

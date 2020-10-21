@@ -8,17 +8,15 @@ import org.somet2say.flare.ResponseData;
 public class CountStat implements Stat {
 
     public AtomicInteger count = new AtomicInteger();
-
     @Override
     public void computeStep(Category bucket, ResponseData<String> responseData) {
         count.incrementAndGet();
     }
 
     @Override
-    public void computeEnd(Category bucket) {
-    }
+    public void computeEnd(Category bucket) {}
 
-    public Stat newInstance(){
+    public Stat newInstance() {
         return new CountStat();
     }
 
