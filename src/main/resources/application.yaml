@@ -1,15 +1,21 @@
 quarkus:
   log:
     level: WARNING
+    console:
+      format: "[%p:%t{id}] %d{HH:mm:ss:SSS} %m%n"
+    category:
+      "org.someth2say":
+        level: DEBUG
 
 storm:
   urls: 
-    - http://metaphorpsum.com/paragraphs/1/1
-    - http://httpbin.org/status/400
+     - http://www.thisurldoesnotexits.com
+#    - http://metaphorpsum.com/paragraphs/1/1
+#    - http://httpbin.org/status/400
 #  order: random # or sequential or roundrobin
 #  order: sequential
 #  order: roundrobin
-  threads: 1
+  threads: 3
   repeat: 10
 #  delay: 100
   categorizers:
@@ -21,8 +27,9 @@ storm:
 #    - durationhistogram(5)
     - timehistogram(2000)
   stats:
-    - url
+    - urls
     - count
+    - errors
 #    - relativecount
 #    - time
 #    - durationsum

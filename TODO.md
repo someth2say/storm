@@ -7,4 +7,4 @@
 - pre-build clients
 - better category key generation
 - Duration stats: confidence intervals
-- stats: URLs in a category
+- Add request and connect timeout
