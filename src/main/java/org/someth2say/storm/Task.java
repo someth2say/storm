@@ -12,10 +12,7 @@ import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.List;
-import java.util.Random;
 import java.util.concurrent.Callable;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.jboss.logging.Logger;
 import org.someth2say.storm.configuration.Configuration;
@@ -25,7 +22,6 @@ final class Task implements Callable<ResponseData<String>> {
 
 	private Configuration configuration;
 	private Category bucket;
-	private static AtomicInteger requestCounter = new AtomicInteger();
 
 	public Task(final Category rootBucket, final Configuration configuration) {
 		this.bucket = rootBucket;
@@ -35,11 +31,11 @@ final class Task implements Callable<ResponseData<String>> {
 	@Override
 	public ResponseData<String> call() {
 		final HttpClient httpClient = buildHttpClient();
-		final URI nextURL = getNextURL();
+		final URI nextURL = configuration.order.getNextURL(configuration.urls, configuration.repeat);
 
 		final HttpRequest request = createRequest(nextURL);
 
-		ResponseData<String> responseData = createResponseData(httpClient, request);
+		ResponseData<String> responseData = executeRequest(httpClient, request);
 
 		bucket.addResponse(responseData);
 
@@ -57,7 +53,7 @@ final class Task implements Callable<ResponseData<String>> {
 		}
 	}
 
-	private ResponseData<String> createResponseData(final HttpClient httpClient, final HttpRequest request) {
+	private ResponseData<String> executeRequest(final HttpClient httpClient, final HttpRequest request) {
 		LOG.debugf("Performing request to %s", request.uri());
 		final Instant startTime = Instant.now();
 		Instant endTime;
@@ -77,12 +73,12 @@ final class Task implements Callable<ResponseData<String>> {
 		return responseData;
 	}
 
-	private HttpRequest createRequest(final URI nextURL) {
+	private HttpRequest createRequest(final URI uri) {
 
 		// String headers;
 		// Duration requestTimeout;
 		HttpRequest request;
-		request = HttpRequest.newBuilder().uri(nextURL)
+		request = HttpRequest.newBuilder().uri(uri)
 				// .headers(headers)
 				// .timeout(requestTimeout)
 				.GET().build();
@@ -91,37 +87,19 @@ final class Task implements Callable<ResponseData<String>> {
 	}
 
 	private HttpClient buildHttpClient() {
-		final Duration connectTimeout = Duration.ofSeconds(20);
+		LOG.debug("Constructing HTTP client");
+		//final Duration connectTimeout = Duration.ofSeconds(20);
 		// Executor executor;
 
 		final ProxySelector proxy = ProxySelector.of(new InetSocketAddress("proxy.example.com", 80));
-		final Version httpVersion = Version.HTTP_1_1;
+		final Version httpVersion = Version.HTTP_2;
 
-		final HttpClient httpClient = HttpClient.newBuilder().version(httpVersion).connectTimeout(connectTimeout)
+		final HttpClient httpClient = HttpClient.newBuilder().version(httpVersion)
+				//.connectTimeout(connectTimeout)
 				// .executor(executor)
 				.followRedirects(Redirect.NORMAL)
 				// .proxy(proxy)
 				.build();
 		return httpClient;
-	}
-
-	private URI getNextURL() {
-		final List<URI> urls = configuration.urls;
-		int index;
-		int nextCounter = requestCounter.getAndIncrement();
-		switch (configuration.order) {
-			case roundrobin:
-				index = nextCounter % urls.size();
-				break;
-			case sequential:
-				double step = ((double) configuration.repeat / urls.size());
-				index = (int) (nextCounter / step);
-				break;
-			default:
-			case random:
-				index = new Random().nextInt(urls.size());
-				break;
-		}
-		return urls.get(index);
 	}
 }

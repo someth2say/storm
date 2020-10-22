@@ -7,7 +7,7 @@ import org.someth2say.storm.ResponseData;
 public class HttpCodeCategorizer implements Categorizer {
 
     @Override
-    public Optional<String> getCategoryFor(final ResponseData<String> responseData) {
+    public Optional<String> getCategoryKeyFor(final ResponseData<String> responseData) {
         if (responseData.response != null)
             return Optional.of(Integer.toString(responseData.response.statusCode()));
         else

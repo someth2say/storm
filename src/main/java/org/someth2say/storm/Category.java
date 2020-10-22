@@ -45,15 +45,12 @@ public class Category {
         updateStats(responseData);
         // 2.- Add response
         responseDatas.add(responseData);
-        LOG.debugf("Added response %s to category %s", responseData, this);
     }
 
     private void updateStats(final ResponseData<String> response) {
         stats.forEach(s -> {
-            LOG.debugf("Computing stat %s for response %s",s,response);
+            LOG.debugf("Computing stat %s",s.getClass().getSimpleName());
             s.computeStep(this, response);
-            LOG.debugf("Computed stat %s for response %s",s,response);
-
         });
     }
 
@@ -91,7 +88,7 @@ public class Category {
     private void addResponsesToChildCategories(final Categorizer categorizer, final Configuration configuration) {
 
         responseDatas.forEach((responseData) -> {
-            final Optional<String> optKey = categorizer.getCategoryFor(responseData);
+            final Optional<String> optKey = categorizer.getCategoryKeyFor(responseData);
 
             String key = buildCategoryKey(categorizer, optKey.orElse(null));
             Category subcategory = categories.computeIfAbsent(key, k -> {

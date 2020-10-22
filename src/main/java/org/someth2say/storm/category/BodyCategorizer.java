@@ -11,7 +11,7 @@ public class BodyCategorizer implements Categorizer {
         return "body";
     }
     @Override
-    public Optional<String> getCategoryFor(ResponseData<String> responseData) {
+    public Optional<String> getCategoryKeyFor(ResponseData<String> responseData) {
         if (responseData.response != null) {
             return Optional.of(responseData.response.body());
         } else {

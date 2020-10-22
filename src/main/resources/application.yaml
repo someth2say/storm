@@ -5,34 +5,35 @@ quarkus:
       format: "[%p:%t{id}] %d{HH:mm:ss:SSS} %m%n"
     category:
       "org.someth2say":
-        level: DEBUG
+        level: WARNING
 
 storm:
   urls: 
      - http://www.thisurldoesnotexits.com
      - http://metaphorpsum.com/paragraphs/1/1
-#    - http://httpbin.org/status/400
-#  order: random # or sequential or roundrobin
-#  order: sequential
-#  order: roundrobin
+     - http://httpbin.org/status/400
+#  order: RANDOM 
+#  order: SEQUENTIAL
+  order: ROUNDROBIN
   threads: 3
   repeat: 10
 #  delay: 100
   categorizers:
-#    - httpcode
-#    - regexpmatch(.*( (a|the) ).*)
-    - body
-#    - header(server)
-#    - URL
-#    - durationhistogram(5)
-#    - timehistogram(2000)
+  # - httpcode
+  # - regexpmatch(.*( (a|the) ).*)
+  # - body
+  # - header(server)
+  # - URL
+  # - durationhistogram(5)
+   - timehistogram(200)
   stats:
     - urls
     - count
-    - errors
-#    - relativecount
+#    - errors
+    - relativecount
+    - relativeduration
 #    - time
-#    - durationsum
+    - durationsum
 #    - headers
 #    - durationstats
 

@@ -29,7 +29,7 @@ public class Configuration {
     public int repeat = 10;
 
     @Option(names = { "-o", "--order" }, description = "Strategy for picking the next URL from the list.")
-    public Order order = Order.random;
+    public Order order = Order.RANDOM;
 
     // @NotEmpty 
     // TODO: Does not work, as validation occurs before enriching with command line.

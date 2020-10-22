@@ -1,6 +1,5 @@
 - config sanity checks
 - Use Picocli as MicroProfile Config source
-- Proper logging
 - Proper testing
 - Relative duration
 - proxy
@@ -8,3 +7,4 @@
 - better category key generation
 - Duration stats: confidence intervals
 - Add request and connect timeout
+- Add extra config data to URLS: timeout, headers...

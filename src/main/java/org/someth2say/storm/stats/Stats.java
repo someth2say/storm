@@ -8,6 +8,7 @@ public enum Stats {
     URLS(URLSStat::new),
     COUNT(CountStat::new), 
     RELATIVECOUNT(RelativeCountStat::new),
+    RELATIVEDURATION(RelativeDurationStat::new),
     DURATIONSUM(DurationSumStat::new),
     DURATIONSTATS(DurationStatsStat::new), 
     ERRORS(ErrorsStat::new),

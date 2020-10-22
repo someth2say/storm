@@ -9,7 +9,7 @@ public class HeaderCategorizer implements Categorizer {
     private final String headerKey;
 
     @Override
-    public Optional<String> getCategoryFor(ResponseData<String> responseData) {
+    public Optional<String> getCategoryKeyFor(ResponseData<String> responseData) {
         if (responseData.response!=null)
            return responseData.response.headers().firstValue(headerKey);
         else

@@ -64,7 +64,7 @@ public class TimeHistogramCategorizer implements Categorizer {
     }
 
     @Override
-    public Optional<String> getCategoryFor(ResponseData<String> responseData) {
+    public Optional<String> getCategoryKeyFor(ResponseData<String> responseData) {
         return slices.stream().filter(slice -> sliceContains(slice, responseData.endTime)).map(Pair::toString)
                 .findFirst();
     }

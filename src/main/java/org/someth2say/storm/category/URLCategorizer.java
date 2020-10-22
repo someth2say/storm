@@ -7,7 +7,7 @@ import org.someth2say.storm.ResponseData;
 public class URLCategorizer implements Categorizer {
 
     @Override
-    public Optional<String> getCategoryFor(ResponseData<String> responseData) {
+    public Optional<String> getCategoryKeyFor(ResponseData<String> responseData) {
         return Optional.of(responseData.request.uri().toString());
     }
 

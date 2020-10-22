@@ -63,7 +63,7 @@ public class DurationHistogramCategorizer implements Categorizer {
     }
 
     @Override
-    public Optional<String> getCategoryFor(ResponseData<String> responseData) {
+    public Optional<String> getCategoryKeyFor(ResponseData<String> responseData) {
         var duration = responseData.getDuration();
         return slices.stream().filter(slice -> sliceContains(slice, duration)).map(Pair::toString).findFirst();
     }
