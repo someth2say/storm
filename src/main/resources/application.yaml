@@ -10,7 +10,7 @@ quarkus:
 storm:
   urls: 
      - http://www.thisurldoesnotexits.com
-#    - http://metaphorpsum.com/paragraphs/1/1
+     - http://metaphorpsum.com/paragraphs/1/1
 #    - http://httpbin.org/status/400
 #  order: random # or sequential or roundrobin
 #  order: sequential
@@ -21,11 +21,11 @@ storm:
   categorizers:
 #    - httpcode
 #    - regexpmatch(.*( (a|the) ).*)
-#    - body
+    - body
 #    - header(server)
 #    - URL
 #    - durationhistogram(5)
-    - timehistogram(2000)
+#    - timehistogram(2000)
   stats:
     - urls
     - count

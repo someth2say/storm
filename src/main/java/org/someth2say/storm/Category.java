@@ -93,15 +93,13 @@ public class Category {
         responseDatas.forEach((responseData) -> {
             final Optional<String> optKey = categorizer.getCategoryFor(responseData);
 
-            if (optKey.isPresent()) {
-                String key = buildCategoryKey(categorizer, optKey.get());
-                Category subcategory = categories.computeIfAbsent(key, k -> {
-                    System.out.println("WARNING: Inconsistency. Categorizer " + categorizer.getClass().getSimpleName()
-                            + " provided a category for a response that was not foreseen: " + k);
-                    return new Category(configuration, this);
-                });
-                subcategory.addResponse(responseData);
-            }
+            String key = buildCategoryKey(categorizer, optKey.orElse(null));
+            Category subcategory = categories.computeIfAbsent(key, k -> {
+                LOG.infof("Inconsistency. Categorizer %s provided a category that was not foreseen: %s",categorizer.getClass().getSimpleName(),k);
+                return new Category(configuration, this);
+            });
+            subcategory.addResponse(responseData);
+
         });
 
         // Once all responses are added, update stats
