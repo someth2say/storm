@@ -1,10 +1,7 @@
 - config sanity checks
 - Use Picocli as MicroProfile Config source
 - Proper testing
-- Relative duration
-- proxy
-- pre-build clients
 - better category key generation
 - Duration stats: confidence intervals
-- Add request and connect timeout
 - Add extra config data to URLS: timeout, headers...
+- Implement HTTP authentication (basic?)

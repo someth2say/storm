@@ -1,5 +1,10 @@
 package org.someth2say.storm;
 
+import java.net.ProxySelector;
+import java.net.http.HttpClient;
+import java.net.http.HttpClient.Builder;
+import java.net.http.HttpClient.Version;
+import java.time.Duration;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
@@ -108,11 +113,24 @@ public class Storm implements QuarkusApplication {
     }
 
     private void executeRequests(final Category rootCategory) throws InterruptedException {
+        final HttpClient httpClient = buildHttpClient();
         final ExecutorService pool = Executors.newFixedThreadPool(configuration.threads);
         for (int exec = 0; exec < configuration.repeat; exec++) {
-            pool.submit(new Task(rootCategory, configuration));
+            pool.submit(new Task(rootCategory, configuration, httpClient));
         }
         pool.shutdown();
         pool.awaitTermination(30, TimeUnit.SECONDS);
     }
+
+    private HttpClient buildHttpClient() {
+		LOG.debug("Constructing HTTP client");
+		final Version httpVersion = Version.HTTP_2;
+		final Builder httpClientBuilder = HttpClient.newBuilder();
+		configuration.proxy.ifPresent(proxyAddress->httpClientBuilder.proxy(ProxySelector.of(proxyAddress)));
+		configuration.connectTimeout.ifPresent(timeout->httpClientBuilder.connectTimeout(Duration.ofMillis(timeout)));
+		configuration.redirect.ifPresent(redirect->httpClientBuilder.followRedirects(redirect));
+
+		final HttpClient httpClient = httpClientBuilder.version(httpVersion).build();
+		return httpClient;
+	}
 }

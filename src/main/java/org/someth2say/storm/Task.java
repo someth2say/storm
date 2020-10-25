@@ -1,11 +1,9 @@
 package org.someth2say.storm;
 
 import java.io.IOException;
-import java.net.InetSocketAddress;
 import java.net.ProxySelector;
 import java.net.URI;
 import java.net.http.HttpClient;
-import java.net.http.HttpClient.Redirect;
 import java.net.http.HttpClient.Version;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -20,22 +18,23 @@ import org.someth2say.storm.configuration.Configuration;
 final class Task implements Callable<ResponseData<String>> {
 	private static final Logger LOG = Logger.getLogger(Task.class);
 
-	private Configuration configuration;
-	private Category bucket;
+	private final Configuration configuration;
+	private final Category bucket;
+	private final HttpClient httpClient;
 
-	public Task(final Category rootBucket, final Configuration configuration) {
+	public Task(final Category rootBucket, final Configuration configuration, final HttpClient httpClient) {
 		this.bucket = rootBucket;
 		this.configuration = configuration;
+		this.httpClient = httpClient;
 	}
 
 	@Override
 	public ResponseData<String> call() {
-		final HttpClient httpClient = buildHttpClient();
 		final URI nextURL = configuration.order.getNextURL(configuration.urls, configuration.repeat);
 
 		final HttpRequest request = createRequest(nextURL);
 
-		ResponseData<String> responseData = executeRequest(httpClient, request);
+		final ResponseData<String> responseData = executeRequest(httpClient, request);
 
 		bucket.addResponse(responseData);
 
@@ -48,7 +47,7 @@ final class Task implements Callable<ResponseData<String>> {
 		if (this.configuration.delay > 0) {
 			try {
 				Thread.sleep(this.configuration.delay);
-			} catch (InterruptedException e) {
+			} catch (final InterruptedException e) {
 			}
 		}
 	}
@@ -67,7 +66,8 @@ final class Task implements Callable<ResponseData<String>> {
 		} finally {
 			endTime = Instant.now();
 		}
-		final ResponseData<String> responseData = new ResponseData<String>(request, response, startTime, endTime, exception);
+		final ResponseData<String> responseData = new ResponseData<String>(request, response, startTime, endTime,
+				exception);
 		LOG.debugf("Request to %s completed", request.uri());
 
 		return responseData;
@@ -76,30 +76,16 @@ final class Task implements Callable<ResponseData<String>> {
 	private HttpRequest createRequest(final URI uri) {
 
 		// String headers;
-		// Duration requestTimeout;
 		HttpRequest request;
-		request = HttpRequest.newBuilder().uri(uri)
+		final java.net.http.HttpRequest.Builder requestBuilder = HttpRequest.newBuilder();
+
+		configuration.requestTimeout.ifPresent(timeout -> requestBuilder.timeout(Duration.ofMillis(timeout)));
+
+		request = requestBuilder.uri(uri)
 				// .headers(headers)
-				// .timeout(requestTimeout)
 				.GET().build();
 
 		return request;
 	}
 
-	private HttpClient buildHttpClient() {
-		LOG.debug("Constructing HTTP client");
-		//final Duration connectTimeout = Duration.ofSeconds(20);
-		// Executor executor;
-
-		final ProxySelector proxy = ProxySelector.of(new InetSocketAddress("proxy.example.com", 80));
-		final Version httpVersion = Version.HTTP_2;
-
-		final HttpClient httpClient = HttpClient.newBuilder().version(httpVersion)
-				//.connectTimeout(connectTimeout)
-				// .executor(executor)
-				.followRedirects(Redirect.NORMAL)
-				// .proxy(proxy)
-				.build();
-		return httpClient;
-	}
 }

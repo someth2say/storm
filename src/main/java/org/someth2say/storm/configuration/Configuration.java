@@ -1,8 +1,11 @@
 package org.someth2say.storm.configuration;
 
+import java.net.InetSocketAddress;
 import java.net.URI;
+import java.net.http.HttpClient.Redirect;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Positive;
@@ -35,6 +38,20 @@ public class Configuration {
     // TODO: Does not work, as validation occurs before enriching with command line.
     @Parameters(index = "0..*", arity = "0..*", description = "Target URIs for the requests")
     public List<URI> urls;
+
+    @Option(names = {  "--proxy" }, description = "Proxy for setting all connections.")
+    public Optional<InetSocketAddress> proxy;
+
+    // TODO: Apply positive to optionalInt
+    @Option(names = {  "--connectTimeout" }, description = "Connection timeout in milliseconds.")
+    public Optional<Integer> connectTimeout;
+
+    @Option(names = {  "--requestTimeout" }, description = "Request timeout in milliseconds.")
+    public Optional<Integer> requestTimeout;
+
+    @Option(names = { "--redirect" }, description = "Strategy for picking the next URL from the list.")
+    public Optional<Redirect> redirect;
+
 
     @Option(names = { "-c", "--categorizers" }, description = "Categorizers to use to split response data.")
     public List<String> categorizers = Collections.emptyList();

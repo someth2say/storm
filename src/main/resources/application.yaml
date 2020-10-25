@@ -12,9 +12,11 @@ storm:
      - http://www.thisurldoesnotexits.com
      - http://metaphorpsum.com/paragraphs/1/1
      - http://httpbin.org/status/400
-#  order: RANDOM 
-#  order: SEQUENTIAL
-  order: ROUNDROBIN
+#  proxy: "proxy.example.com:80"
+#  connect-timeout: 100
+#  request-timeout: 100
+#  redirect: NORMAL or ALWAYS or NEVER
+#  order: RANDOM or SEQUENTIAL or ROUNDROBIN
   threads: 3
   repeat: 10
 #  delay: 100
@@ -22,18 +24,18 @@ storm:
   # - httpcode
   # - regexpmatch(.*( (a|the) ).*)
   # - body
-  # - header(server)
+   - header(server)
   # - URL
   # - durationhistogram(5)
-   - timehistogram(200)
+  # - timehistogram(200)
   stats:
     - urls
     - count
-#    - errors
+    - errors
     - relativecount
     - relativeduration
 #    - time
     - durationsum
-#    - headers
+    - headers
 #    - durationstats
 
