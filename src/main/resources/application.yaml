@@ -9,9 +9,9 @@ quarkus:
 
 storm:
   urls: 
-     - http://www.thisurldoesnotexits.com
-     - http://metaphorpsum.com/paragraphs/1/1
-     - http://httpbin.org/status/400
+    - http://www.thisurldoesnotexits.com
+    - http://metaphorpsum.com/paragraphs/1/1
+    - http://httpbin.org/status/400
 #  proxy: "proxy.example.com:80"
 #  connect-timeout: 100
 #  request-timeout: 100
@@ -24,18 +24,18 @@ storm:
   # - httpcode
   # - regexpmatch(.*( (a|the) ).*)
   # - body
-   - header(server)
+  # - header(server)
   # - URL
   # - durationhistogram(5)
   # - timehistogram(200)
   stats:
-    - urls
+  #  - urls
     - count
-    - errors
-    - relativecount
-    - relativeduration
-#    - time
+  #  - errors
+  #  - relativecount
+  #  - relativeduration
+    - time
     - durationsum
-    - headers
-#    - durationstats
+  #  - headers
+  #  - durationstats
 

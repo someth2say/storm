@@ -1,10 +1,8 @@
 package org.someth2say.storm;
 
 import java.io.IOException;
-import java.net.ProxySelector;
 import java.net.URI;
 import java.net.http.HttpClient;
-import java.net.http.HttpClient.Version;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
@@ -76,16 +74,13 @@ final class Task implements Callable<ResponseData<String>> {
 	private HttpRequest createRequest(final URI uri) {
 
 		// String headers;
-		HttpRequest request;
 		final java.net.http.HttpRequest.Builder requestBuilder = HttpRequest.newBuilder();
 
 		configuration.requestTimeout.ifPresent(timeout -> requestBuilder.timeout(Duration.ofMillis(timeout)));
-
-		request = requestBuilder.uri(uri)
+		return requestBuilder.uri(uri)
 				// .headers(headers)
-				.GET().build();
-
-		return request;
+				.GET()
+				.build();
 	}
 
 }

@@ -10,6 +10,7 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import org.jboss.logging.Logger;
 import org.someth2say.storm.category.Categorizer;
@@ -41,22 +42,26 @@ public class Category {
 
     public void addResponse(final ResponseData<String> responseData) {
         LOG.debugf("Adding response %s to category %s", responseData, this);
-        // 1.- Update stats
-        updateStats(responseData);
-        // 2.- Add response
+        // 1.- Add response
         responseDatas.add(responseData);
+        // 2.- Update stats
+        updateStats(responseData);
     }
 
     private void updateStats(final ResponseData<String> response) {
         stats.forEach(s -> {
-            LOG.debugf("Computing stat %s",s.getClass().getSimpleName());
+            LOG.debugf("Computing stat %s", s.getClass().getSimpleName());
             s.computeStep(this, response);
         });
     }
 
     @Override
     public String toString() {
-        return SerializationUtils.toYAML(this);
+        try {
+            return SerializationUtils.toYAML(this);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Unable to serialize category.",e);
+        }
     }
 
     public void categorize(final Configuration configuration) {
@@ -68,7 +73,6 @@ public class Category {
         // 1.- Get categories
         if (catIdx < categorizers.size()) {
             final Categorizer categorizer = Categorizers.buildCategorizer(categorizers.get(catIdx));
-
             final List<String> subcategories = categorizer.getCategories(this);
 
             // 2.- Create buckets per category
@@ -92,7 +96,8 @@ public class Category {
 
             String key = buildCategoryKey(categorizer, optKey.orElse(null));
             Category subcategory = categories.computeIfAbsent(key, k -> {
-                LOG.infof("Inconsistency. Categorizer %s provided a category that was not foreseen: %s",categorizer.getClass().getSimpleName(),k);
+                LOG.infof("Inconsistency. Categorizer %s provided a category that was not foreseen: %s",
+                        categorizer.getClass().getSimpleName(), k);
                 return new Category(configuration, this);
             });
             subcategory.addResponse(responseData);

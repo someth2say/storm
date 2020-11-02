@@ -15,6 +15,8 @@ import javax.inject.Inject;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 import org.jboss.logging.Logger;
 import org.someth2say.storm.category.Categorizers;
 import org.someth2say.storm.configuration.Configuration;
@@ -43,29 +45,52 @@ public class Storm implements QuarkusApplication {
 
     @Override
     public int run(final String... args) throws Exception {
-        CommandLine commandLine;
+        return runAsCategory(args)!=null?0:-1;
+    }
+
+    public Category runAsCategory(String... args){
         try {
-            commandLine = parseCommanLine(args);
+            CommandLine commandLine = enrichConfigWithCommandLine(args);
+            
             validateConfiguration();
+
+            if (commandLine.isUsageHelpRequested()) {
+                printHelp(commandLine);
+            } else if (commandLine.isVersionHelpRequested()) {
+                printVersion(commandLine);
+            } else if (configuration.dumpConfig) {
+                printConfig();
+            } else {
+                return main();
+            }
+
         } catch (final Exception e) {
-            return -1;
+            System.err.println(e.getLocalizedMessage());
         }
 
-        if (commandLine.isUsageHelpRequested()) {
-            commandLine.usage(System.out);
-            System.out.println();
-            System.out.println("Available categorizers: " + List.of(Categorizers.values()));
-            System.out.println("Available stats: " + List.of(Stats.values()));
-            return 0;
-        } else if (commandLine.isVersionHelpRequested()) {
-            commandLine.printVersionHelp(System.out);
-            return 0;
-        } else if (configuration.dumpConfig) {
-            System.out.println(SerializationUtils.toYAML(configuration));
-            return 0;
-        }
+        return null;
+    }
 
-        return main();
+
+    private void printVersion(CommandLine commandLine) {
+        commandLine.printVersionHelp(System.out);
+    }
+
+    private void printConfig() throws JsonProcessingException {
+        System.out.println(SerializationUtils.toYAML(configuration));
+    }
+
+    private void printHelp(CommandLine commandLine) {
+        commandLine.usage(System.out);
+        System.out.println();
+        System.out.println("Available categorizers: " + List.of(Categorizers.values()));
+        System.out.println("Available stats: " + List.of(Stats.values()));
+    }
+
+    private CommandLine enrichConfigWithCommandLine(final String... args) {
+        CommandLine commandLine = new CommandLine(configuration, factory);
+        checkCommandLineParseResults(commandLine, args);
+        return commandLine;
     }
 
     private void validateConfiguration() {
@@ -76,10 +101,7 @@ public class Storm implements QuarkusApplication {
         }
     }
 
-    private CommandLine parseCommanLine(final String... args) {
-        CommandLine commandLine;
-        commandLine = new CommandLine(configuration, factory);
-
+    private void checkCommandLineParseResults(CommandLine commandLine, final String... args) {
         ParseResult parseResults;
         try {
             parseResults = commandLine.parseArgs(args);
@@ -92,24 +114,23 @@ public class Storm implements QuarkusApplication {
             System.err.println(e.getLocalizedMessage());
             throw new RuntimeException();
         }
-        return commandLine;
     }
 
-    public int main() throws Exception {
+    public Category main() throws Exception {
 
         // 0.- Prepare inputs
         final Category rootBucket = new Category(configuration, null);
 
         // 1.- Execute all tasks and gather independent stats.
         executeRequests(rootBucket);
+
+        // 2.- Perform finalization step for stats computation
         rootBucket.finalizeStats();
 
-        // 2.- Categorize buckets
+        // 3.- Categorize buckets
         rootBucket.categorize(configuration);
 
-        // 3.- Dump output
-        System.out.println(rootBucket);
-        return 0;
+        return rootBucket;
     }
 
     private void executeRequests(final Category rootCategory) throws InterruptedException {
@@ -123,14 +144,14 @@ public class Storm implements QuarkusApplication {
     }
 
     private HttpClient buildHttpClient() {
-		LOG.debug("Constructing HTTP client");
-		final Version httpVersion = Version.HTTP_2;
-		final Builder httpClientBuilder = HttpClient.newBuilder();
-		configuration.proxy.ifPresent(proxyAddress->httpClientBuilder.proxy(ProxySelector.of(proxyAddress)));
-		configuration.connectTimeout.ifPresent(timeout->httpClientBuilder.connectTimeout(Duration.ofMillis(timeout)));
-		configuration.redirect.ifPresent(redirect->httpClientBuilder.followRedirects(redirect));
+        LOG.debug("Constructing HTTP client");
+        final Version httpVersion = Version.HTTP_2;
+        final Builder httpClientBuilder = HttpClient.newBuilder();
+        configuration.proxy.ifPresent(proxyAddress -> httpClientBuilder.proxy(ProxySelector.of(proxyAddress)));
+        configuration.connectTimeout.ifPresent(timeout -> httpClientBuilder.connectTimeout(Duration.ofMillis(timeout)));
+        configuration.redirect.ifPresent(redirect -> httpClientBuilder.followRedirects(redirect));
 
-		final HttpClient httpClient = httpClientBuilder.version(httpVersion).build();
-		return httpClient;
-	}
+        final HttpClient httpClient = httpClientBuilder.version(httpVersion).build();
+        return httpClient;
+    }
 }
