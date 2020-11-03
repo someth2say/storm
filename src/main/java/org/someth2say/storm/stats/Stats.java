@@ -26,8 +26,10 @@ public enum Stats {
     }
 
     public static List<Stat> buildStats(List<String> stats) {
-        return stats.stream().map(str -> Stats.valueOf(str.toUpperCase())).map(st -> st.getInstance())
-                .collect(Collectors.toList());
+        return stats.stream()
+            .map(str -> Stats.valueOf(str.toUpperCase()))
+            .map(st -> st.getInstance())
+            .collect(Collectors.toList());
     }
 
 }

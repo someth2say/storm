@@ -34,15 +34,12 @@ public class DurationHistogramCategorizer implements Categorizer {
         return "durationhistogram";
     }
 
-    public List<String> getCategories(final Category bucket) {
+    public List<String> getCategoryKeys(final Category bucket) {
         calculateSlices(bucket);
         return slices.stream().map(Pair::toString).collect(Collectors.toList());
     }
 
     private void calculateSlices(final Category bucket) {
-        // if (bucket.responseDatas.isEmpty()){
-        // return;
-        // }
         var minDuration = Duration.ofSeconds(Long.MAX_VALUE, 0);
         var maxDuration = Duration.ZERO;
         for (ResponseData<String> responseData : bucket.responseDatas) {

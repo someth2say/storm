@@ -31,13 +31,14 @@ public class Category {
     @JsonIgnore
     public final Deque<ResponseData<String>> responseDatas = new ConcurrentLinkedDeque<>();
 
-    public final Collection<Stat> stats;
-
+    @JsonIgnore
+    public final Collection<Stat> statObjs;
+    public Map<Object, Object> stats = new LinkedHashMap<>();
     public Map<Object, Category> categories = new LinkedHashMap<>();
 
     public Category(final Configuration configuration, final Category parent) {
         this.parent = parent;
-        this.stats = Stats.buildStats(configuration.stats);
+        this.statObjs = Stats.buildStats(configuration.stats);
     }
 
     public void addResponse(final ResponseData<String> responseData) {
@@ -49,9 +50,9 @@ public class Category {
     }
 
     private void updateStats(final ResponseData<String> response) {
-        stats.forEach(s -> {
-            LOG.debugf("Computing stat %s", s.getClass().getSimpleName());
-            s.computeStep(this, response);
+        statObjs.forEach(stat -> {
+            LOG.debugf("Computing stat %s", stat.getClass().getSimpleName());
+            stat.computeStep(this, response);
         });
     }
 
@@ -73,11 +74,11 @@ public class Category {
         // 1.- Get categories
         if (catIdx < categorizers.size()) {
             final Categorizer categorizer = Categorizers.buildCategorizer(categorizers.get(catIdx));
-            final List<String> subcategories = categorizer.getCategories(this);
 
             // 2.- Create buckets per category
-            subcategories.forEach(
-                    cat -> this.categories.put(buildCategoryKey(categorizer, cat), new Category(configuration, this)));
+            //This is important, as some categorizers use it as initialization
+            categorizer.getCategoryKeys(this).forEach(
+                    key -> this.categories.put(buildCategoryKey(categorizer, key), new Category(configuration, this)));
 
             // 3.- Add each response to the new bucket.
             addResponsesToChildCategories(categorizer, configuration);
@@ -109,10 +110,14 @@ public class Category {
     }
 
     public void finalizeStats() {
-        stats.forEach(stat -> stat.computeEnd(this));
+        statObjs.forEach(stat -> {
+            stat.computeEnd(this);
+            this.stats.putAll(stat.getStatResults());
+           }
+        );
     }
 
     private String buildCategoryKey(final Categorizer categorizer, final String key) {
-        return categorizer.toString() + "=" + (key != null ? key : "~");
+        return key != null ? key : "~";
     }
 }

@@ -45,7 +45,12 @@ public class Storm implements QuarkusApplication {
 
     @Override
     public int run(final String... args) throws Exception {
-        return runAsCategory(args)!=null?0:-1;
+        Category rootCategory = runAsCategory(args);
+        if (rootCategory==null){
+            return -1;
+        }
+        System.out.println(rootCategory);
+        return 0;
     }
 
     public Category runAsCategory(String... args){

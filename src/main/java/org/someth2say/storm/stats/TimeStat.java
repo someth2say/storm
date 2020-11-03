@@ -1,6 +1,7 @@
 package org.someth2say.storm.stats;
 
 import java.time.Instant;
+import java.util.Map;
 
 import org.someth2say.storm.Category;
 import org.someth2say.storm.ResponseData;
@@ -10,6 +11,12 @@ public class TimeStat implements Stat {
     public Instant startTime = Instant.MAX;
     public Instant endTime = Instant.MIN;
 
+    @Override
+    public Map<Object, Object> getStatResults() {
+       return Map.of("start", this.startTime,
+       "end",this.endTime);
+    }
+    
     @Override
     public synchronized void computeStep(Category bucket, ResponseData<String> responseData) {
         startTime = responseData.startTime.isBefore(startTime) ? responseData.startTime : startTime;

@@ -3,6 +3,7 @@ package org.someth2say.storm.stats;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.someth2say.storm.Category;
@@ -16,6 +17,15 @@ public class DurationStatsStat implements Stat {
     public double variance;
     public double stdev;
 
+    @Override
+    public Map<Object, Object> getStatResults() {
+       return Map.of("min", this.minDuration,
+       "max",this.maxDuration,
+       "mean",this.mean,
+       "variance", this.variance,
+       "stdev",this.stdev);
+    }
+    
     @Override
     public synchronized void computeStep(Category bucket, ResponseData<String> responseData) {
         Duration responseDuration = responseData.getDuration();

@@ -8,7 +8,7 @@ import org.someth2say.storm.Category;
 import org.someth2say.storm.ResponseData;
 
 public interface Categorizer {
-    default List<String> getCategories(final Category bucket) {
+    default List<String> getCategoryKeys(final Category bucket) {
         return bucket.responseDatas.stream()
         .map(this::getCategoryKeyFor)
         .flatMap(Optional::stream)

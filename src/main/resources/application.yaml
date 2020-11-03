@@ -24,18 +24,18 @@ storm:
   # - httpcode
   # - regexpmatch(.*( (a|the) ).*)
   # - body
-  # - header(server)
-  # - URL
+  - header(server)
+  - URL
   # - durationhistogram(5)
   # - timehistogram(200)
   stats:
-  #  - urls
+    - urls
     - count
-  #  - errors
-  #  - relativecount
-  #  - relativeduration
-    - time
-    - durationsum
-  #  - headers
-  #  - durationstats
+    # - errors
+    # - relativecount
+    # - relativeduration
+    # - time
+    # - durationsum
+    # - headers
+    # - durationstats
 

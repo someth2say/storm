@@ -36,7 +36,7 @@ public class TimeHistogramCategorizer implements Categorizer {
         return "timehistogram";
     }
 
-    public List<String> getCategories(final Category bucket) {
+    public List<String> getCategoryKeys(final Category bucket) {
         calculateSlices(bucket);
         return slices.stream().map(Pair::toString).collect(Collectors.toList());
     }

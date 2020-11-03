@@ -1,5 +1,7 @@
 package org.someth2say.storm.stats;
 
+import java.util.Map;
+
 import org.someth2say.storm.Category;
 import org.someth2say.storm.ResponseData;
 
@@ -10,4 +12,5 @@ public interface Stat {
 
     public Stat newInstance();
 
+    public Map<Object, Object> getStatResults();
 }
