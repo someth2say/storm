@@ -3,16 +3,14 @@ package org.someth2say.storm;
 import java.net.ProxySelector;
 import java.net.http.HttpClient;
 import java.net.http.HttpClient.Builder;
-import java.net.http.HttpClient.Version;
 import java.time.Duration;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
-import javax.validation.ConstraintViolation;
+import javax.inject.Singleton;
 import javax.validation.Validator;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -20,16 +18,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import org.jboss.logging.Logger;
 import org.someth2say.storm.category.Categorizers;
 import org.someth2say.storm.configuration.Configuration;
-import org.someth2say.storm.serialization.SerializationUtils;
+import org.someth2say.storm.configuration.PicocliConfigSource;
 import org.someth2say.storm.stats.Stats;
+import org.someth2say.storm.utils.SerializationUtils;
 
 import io.quarkus.runtime.QuarkusApplication;
-import io.quarkus.runtime.annotations.QuarkusMain;
 import picocli.CommandLine;
-import picocli.CommandLine.ParameterException;
-import picocli.CommandLine.ParseResult;
 
-@QuarkusMain
+@Singleton
 public class Storm implements QuarkusApplication {
 
     private static final Logger LOG = Logger.getLogger(Storm.class);
@@ -40,42 +36,34 @@ public class Storm implements QuarkusApplication {
     @Inject
     Validator validator;
 
-    @Inject
-    CommandLine.IFactory factory;
-
     @Override
     public int run(final String... args) throws Exception {
         Category rootCategory = runAsCategory(args);
-        if (rootCategory==null){
+        if (rootCategory == null) {
             return -1;
         }
         System.out.println(rootCategory);
         return 0;
     }
 
-    public Category runAsCategory(String... args){
-        try {
-            CommandLine commandLine = enrichConfigWithCommandLine(args);
-            
-            validateConfiguration();
+    public Category runAsCategory(String... args) throws Exception {
 
-            if (commandLine.isUsageHelpRequested()) {
-                printHelp(commandLine);
-            } else if (commandLine.isVersionHelpRequested()) {
-                printVersion(commandLine);
-            } else if (configuration.dumpConfig) {
-                printConfig();
-            } else {
-                return main();
-            }
-
-        } catch (final Exception e) {
-            System.err.println(e.getLocalizedMessage());
+        CommandLine commandLine = PicocliConfigSource.commandLine;
+        if (commandLine.isUsageHelpRequested()) {
+            printHelp(commandLine);
+        } else if (commandLine.isVersionHelpRequested()) {
+            printVersion(commandLine);
+        } else if (configuration.dumpConfig) {
+            printConfig();
+        } else if (configuration.urls == null || configuration.urls.isEmpty()) {
+            printHelp(commandLine);
+            System.out.println("Please provide at least one URL.");
+        } else {
+            return main();
         }
 
         return null;
     }
-
 
     private void printVersion(CommandLine commandLine) {
         commandLine.printVersionHelp(System.out);
@@ -92,34 +80,15 @@ public class Storm implements QuarkusApplication {
         System.out.println("Available stats: " + List.of(Stats.values()));
     }
 
-    private CommandLine enrichConfigWithCommandLine(final String... args) {
-        CommandLine commandLine = new CommandLine(configuration, factory);
-        checkCommandLineParseResults(commandLine, args);
-        return commandLine;
-    }
-
-    private void validateConfiguration() {
-        final Set<ConstraintViolation<Configuration>> violations = validator.validate(configuration);
-        if (!violations.isEmpty()) {
-            violations.stream().map(v -> v.getPropertyPath() + " " + v.getMessage()).forEach(LOG::error);
-            throw new RuntimeException();
-        }
-    }
-
-    private void checkCommandLineParseResults(CommandLine commandLine, final String... args) {
-        ParseResult parseResults;
-        try {
-            parseResults = commandLine.parseArgs(args);
-            if (!parseResults.errors().isEmpty()) {
-                parseResults.errors().forEach(e -> LOG.error(e));
-                throw new RuntimeException();
-            }
-
-        } catch (final ParameterException e) {
-            System.err.println(e.getLocalizedMessage());
-            throw new RuntimeException();
-        }
-    }
+    // private void validateConfiguration() {
+    // final Set<ConstraintViolation<Configuration>> violations =
+    // validator.validate(configuration);
+    // if (!violations.isEmpty()) {
+    // violations.stream().map(v -> v.getPropertyPath() + " " +
+    // v.getMessage()).forEach(LOG::error);
+    // throw new RuntimeException();
+    // }
+    // }
 
     public Category main() throws Exception {
 
@@ -140,8 +109,10 @@ public class Storm implements QuarkusApplication {
 
     private void executeRequests(final Category rootCategory) throws InterruptedException {
         final HttpClient httpClient = buildHttpClient();
-        final ExecutorService pool = Executors.newFixedThreadPool(configuration.threads);
-        for (int exec = 0; exec < configuration.repeat; exec++) {
+        final ExecutorService pool = configuration.threads != null ? Executors.newFixedThreadPool(configuration.threads)
+                : Executors.newCachedThreadPool();
+        Integer repeat = configuration.repeat!=null?configuration.repeat:1;
+        for (int exec = 0; exec < repeat; exec++) {
             pool.submit(new Task(rootCategory, configuration, httpClient));
         }
         pool.shutdown();
@@ -150,13 +121,17 @@ public class Storm implements QuarkusApplication {
 
     private HttpClient buildHttpClient() {
         LOG.debug("Constructing HTTP client");
-        final Version httpVersion = Version.HTTP_2;
         final Builder httpClientBuilder = HttpClient.newBuilder();
-        configuration.proxy.ifPresent(proxyAddress -> httpClientBuilder.proxy(ProxySelector.of(proxyAddress)));
-        configuration.connectTimeout.ifPresent(timeout -> httpClientBuilder.connectTimeout(Duration.ofMillis(timeout)));
-        configuration.redirect.ifPresent(redirect -> httpClientBuilder.followRedirects(redirect));
 
-        final HttpClient httpClient = httpClientBuilder.version(httpVersion).build();
-        return httpClient;
+        if (configuration.httpVersion != null)
+            httpClientBuilder.version(configuration.httpVersion);
+        if (configuration.proxy != null)
+            httpClientBuilder.proxy(ProxySelector.of(configuration.proxy));
+        if (configuration.connectTimeout != null)
+            httpClientBuilder.connectTimeout(Duration.ofMillis(configuration.connectTimeout));
+        if (configuration.redirect != null)
+            httpClientBuilder.followRedirects(configuration.redirect);
+
+        return httpClientBuilder.build();
     }
 }

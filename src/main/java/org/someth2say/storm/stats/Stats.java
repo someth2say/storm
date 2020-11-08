@@ -1,5 +1,6 @@
 package org.someth2say.storm.stats;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -26,6 +27,8 @@ public enum Stats {
     }
 
     public static List<Stat> buildStats(List<String> stats) {
+        if (stats==null)
+            return Collections.emptyList();
         return stats.stream()
             .map(str -> Stats.valueOf(str.toUpperCase()))
             .map(st -> st.getInstance())

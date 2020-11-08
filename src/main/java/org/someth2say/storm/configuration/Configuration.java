@@ -1,13 +1,17 @@
 package org.someth2say.storm.configuration;
 
+import java.io.File;
 import java.net.InetSocketAddress;
 import java.net.URI;
+import java.net.http.HttpClient;
 import java.net.http.HttpClient.Redirect;
+import java.net.http.HttpClient.Version;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Positive;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -19,52 +23,55 @@ import picocli.CommandLine;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 
-@ConfigProperties(prefix = "storm")
+@ConfigProperties(prefix="")
 @CommandLine.Command(mixinStandardHelpOptions = true, version = "TO BE IMPORTED FROM POM")
 public class Configuration {
 
     @Positive
-    @Option(names = { "-t", "--threads" }, description = "How many worker threads use")
-    public int threads = 10;
+    @Option(names = { "-t", "--threads" }, description = "How many worker threads use", defaultValue = "10")
+    public Integer threads = null;
 
     @Positive
     @Option(names = { "-r", "--repeat" }, description = "How many times execute the request")
-    public int repeat = 10;
+    public Integer repeat = null;
 
     @Option(names = { "-o", "--order" }, description = "Strategy for picking the next URL from the list.")
-    public Order order = Order.RANDOM;
+    public Order order = null;//
 
-    // @NotEmpty 
-    // TODO: Does not work, as validation occurs before enriching with command line.
-    @Parameters(index = "0..*", arity = "0..*", description = "Target URIs for the requests")
-    public List<URI> urls;
+    @Parameters(arity = "0..*", description = "Target URIs for the requests")
+    public List<URI> urls = null;
 
     @Option(names = {  "--proxy" }, description = "Proxy for setting all connections.")
-    public Optional<InetSocketAddress> proxy;
+    public InetSocketAddress proxy = null;
 
-    // TODO: Apply positive to optionalInt
+    @Positive
     @Option(names = {  "--connectTimeout" }, description = "Connection timeout in milliseconds.")
-    public Optional<Integer> connectTimeout;
+    public Integer connectTimeout = null;
 
     @Option(names = {  "--requestTimeout" }, description = "Request timeout in milliseconds.")
-    public Optional<Integer> requestTimeout;
+    public Integer requestTimeout = null;
 
     @Option(names = { "--redirect" }, description = "Strategy for picking the next URL from the list.")
-    public Optional<Redirect> redirect;
+    public Redirect redirect = null;
 
+    @Option(names = { "--httpVersion" }, description = "HTTP Version to use for clients.")
+    public Version httpVersion = null;
 
     @Option(names = { "-c", "--categorizers" }, description = "Categorizers to use to split response data.")
-    public List<String> categorizers = Collections.emptyList();
+    public List<String> categorizers = null;
 
     @Option(names = { "-s", "--stats" }, description = "Stats generated for each category bucket.")
-    public List<String> stats = List.of(Stats.COUNT.name());
+    public List<String> stats = null;
 
-    @Min(0)
+    @Positive
     @Option(names = { "-d", "--delay" }, description = "Delay time after a response")
-    public int delay = 0;
+    public Integer delay = null;
 
     @JsonIgnore
     @Option(names = { "--dumpConfig" }, description = "Prints the current configuration file and exits")
     public boolean dumpConfig=false;
 
+    @JsonIgnore
+    @Option(names={"--configFile"}, description = "Extra configuration file to load.")
+    public File configFile = null;
 }

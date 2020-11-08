@@ -18,19 +18,7 @@ public class StormTest {
 
         URI uri = HttpBinContainerTestResourceLifeCycleManager.getURI("http", "/status/200");
 
-        // This will only work in JVM mode.
-        Storm storm = Arc.container().instance(Storm.class).get();
-        storm.run(uri.toString());
-    }
-
-    @Test
-    public void runAsCategoryTest() throws Exception {
-
-        URI uri = HttpBinContainerTestResourceLifeCycleManager.getURI("http", "/status/200");
-
-        // This will only work in JVM mode.
-        Storm storm = Arc.container().instance(Storm.class).get();
-        Category result = storm.runAsCategory(uri.toString());
-        System.out.println(result);
+        //TODO: Actually start Quarkus in command mode.
+      
     }
 }

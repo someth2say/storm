@@ -16,9 +16,9 @@ import org.jboss.logging.Logger;
 import org.someth2say.storm.category.Categorizer;
 import org.someth2say.storm.category.Categorizers;
 import org.someth2say.storm.configuration.Configuration;
-import org.someth2say.storm.serialization.SerializationUtils;
 import org.someth2say.storm.stats.Stat;
 import org.someth2say.storm.stats.Stats;
+import org.someth2say.storm.utils.SerializationUtils;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class Category {
@@ -42,7 +42,7 @@ public class Category {
     }
 
     public void addResponse(final ResponseData<String> responseData) {
-        LOG.debugf("Adding response %s to category %s", responseData, this);
+        LOG.debugf("Adding response from %s to category", responseData.request.uri());
         // 1.- Add response
         responseDatas.add(responseData);
         // 2.- Update stats
@@ -72,7 +72,7 @@ public class Category {
     private void categorize(final int catIdx, final Configuration configuration) {
         List<String> categorizers = configuration.categorizers;
         // 1.- Get categories
-        if (catIdx < categorizers.size()) {
+        if (categorizers!=null && catIdx < categorizers.size()) {
             final Categorizer categorizer = Categorizers.buildCategorizer(categorizers.get(catIdx));
 
             // 2.- Create buckets per category

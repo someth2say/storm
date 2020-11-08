@@ -8,10 +8,13 @@ import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 import org.jboss.logging.Logger;
 import org.someth2say.storm.configuration.Configuration;
+import org.someth2say.storm.configuration.Order;
 
 final class Task implements Callable<ResponseData<String>> {
 	private static final Logger LOG = Logger.getLogger(Task.class);
@@ -28,7 +31,10 @@ final class Task implements Callable<ResponseData<String>> {
 
 	@Override
 	public ResponseData<String> call() {
-		final URI nextURL = configuration.order.getNextURL(configuration.urls, configuration.repeat);
+		Order order = configuration.order != null ? configuration.order : Order.RANDOM;
+		List<URI> urls = configuration.urls != null ? configuration.urls : Collections.emptyList();
+		int repeat = configuration.repeat != null ? configuration.repeat : 1;
+		final URI nextURL = order.getNextURL(urls, repeat);
 
 		final HttpRequest request = createRequest(nextURL);
 
@@ -42,7 +48,7 @@ final class Task implements Callable<ResponseData<String>> {
 	}
 
 	private void performDelay() {
-		if (this.configuration.delay > 0) {
+		if (configuration.delay != null) {
 			try {
 				Thread.sleep(this.configuration.delay);
 			} catch (final InterruptedException e) {
@@ -76,11 +82,11 @@ final class Task implements Callable<ResponseData<String>> {
 		// String headers;
 		final java.net.http.HttpRequest.Builder requestBuilder = HttpRequest.newBuilder();
 
-		configuration.requestTimeout.ifPresent(timeout -> requestBuilder.timeout(Duration.ofMillis(timeout)));
+		if (configuration.requestTimeout != null)
+			requestBuilder.timeout(Duration.ofMillis(configuration.requestTimeout));
 		return requestBuilder.uri(uri)
 				// .headers(headers)
-				.GET()
-				.build();
+				.GET().build();
 	}
 
 }

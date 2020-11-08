@@ -1,9 +1,7 @@
-- stats as a map instead a collection of elements with attributes.
 - config sanity checks
 - Use Picocli as MicroProfile Config source
 - Proper testing
-- better category key generation
+- Proper docs (maybe using Antora?)
 - Duration stats: confidence intervals
-- Add extra config data to URLS: timeout, headers...
 - stat: value for a single header, i.e header(server)
 - Implement HTTP authentication (basic?)
