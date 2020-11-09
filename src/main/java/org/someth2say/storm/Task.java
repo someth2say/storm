@@ -31,7 +31,7 @@ final class Task implements Callable<ResponseData<String>> {
 
 	@Override
 	public ResponseData<String> call() {
-		Order order = configuration.order != null ? configuration.order : Order.RANDOM;
+		Order order = configuration.order != null ? configuration.order : Order.ROUNDROBIN;
 		List<URI> urls = configuration.urls != null ? configuration.urls : Collections.emptyList();
 		int repeat = configuration.repeat != null ? configuration.repeat : 1;
 		final URI nextURL = order.getNextURL(urls, repeat);

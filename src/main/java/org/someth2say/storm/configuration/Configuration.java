@@ -3,20 +3,13 @@ package org.someth2say.storm.configuration;
 import java.io.File;
 import java.net.InetSocketAddress;
 import java.net.URI;
-import java.net.http.HttpClient;
 import java.net.http.HttpClient.Redirect;
 import java.net.http.HttpClient.Version;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Positive;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import org.someth2say.storm.stats.Stats;
 
 import io.quarkus.arc.config.ConfigProperties;
 import picocli.CommandLine;

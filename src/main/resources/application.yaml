@@ -1,4 +1,6 @@
 quarkus:
+  banner:
+    enabled: false
   log:
     level: "OFF"
     console:
