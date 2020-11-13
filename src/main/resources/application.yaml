@@ -4,14 +4,17 @@ quarkus:
   log:
     level: "OFF"
     console:
-      format: "[%p:%t{id}] %d{HH:mm:ss:SSS} %m%n"
+      format: "%d{HH:mm:ss:SSS} %m%n"
+      #format: "[%p:%t{id}] %d{HH:mm:ss:SSS} %m%n"
     category:
-      "io.quarkus":
-        level: WARNING
       "org.someth2say.storm":
+        level: INFO
+      "org.someth2say.storm.stat":
+        level: WARNING
+      "org.someth2say.storm.category":
         level: WARNING
       "org.someth2say.storm.configuration":
-        level: DEBUG
+        level: WARNING
 
 ## Those can be used to set default values
 # config-file: /Users/jordisola/Downloads/flare/storm.yaml

@@ -1,7 +1,7 @@
 - config sanity checks
-- Use Picocli as MicroProfile Config source
+- Enable time limit instead of request count limit
 - Proper testing
 - Proper docs (maybe using Antora?)
 - Duration stats: confidence intervals
-- stat: value for a single header, i.e header(server)
+- stat: value for a single header, i.e headervalue(server)
 - Implement HTTP authentication (basic?)

@@ -12,14 +12,16 @@ public class ResponseData<T> {
     final public HttpResponse<String> response;
     final public Exception exception;
     final public HttpRequest request;
+    final public int requestNum;
 
     public ResponseData(final HttpRequest request, final HttpResponse<String> response, final Instant startTime,
-            final Instant endTime, final Exception exception) {
+            final Instant endTime, final Exception exception, int requestNum) {
         this.request = request;
         this.response = response;
         this.startTime = startTime;
         this.endTime = endTime;
         this.exception = exception;
+        this.requestNum = requestNum;
     }
     
     public Duration getDuration(){

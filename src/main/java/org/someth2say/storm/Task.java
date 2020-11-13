@@ -11,6 +11,7 @@ import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.jboss.logging.Logger;
 import org.someth2say.storm.configuration.Configuration;
@@ -18,6 +19,7 @@ import org.someth2say.storm.configuration.Order;
 
 final class Task implements Callable<ResponseData<String>> {
 	private static final Logger LOG = Logger.getLogger(Task.class);
+    private final static AtomicInteger requestCounter = new AtomicInteger();
 
 	private final Configuration configuration;
 	private final Category bucket;
@@ -33,12 +35,13 @@ final class Task implements Callable<ResponseData<String>> {
 	public ResponseData<String> call() {
 		Order order = configuration.order != null ? configuration.order : Order.ROUNDROBIN;
 		List<URI> urls = configuration.urls != null ? configuration.urls : Collections.emptyList();
-		int repeat = configuration.repeat != null ? configuration.repeat : 1;
-		final URI nextURL = order.getNextURL(urls, repeat);
+		int repeat = configuration.count != null ? configuration.count : 1;
+		int count = requestCounter.getAndIncrement();
+		final URI nextURL = order.getNextURL(urls, repeat, count);
 
 		final HttpRequest request = createRequest(nextURL);
 
-		final ResponseData<String> responseData = executeRequest(httpClient, request);
+		final ResponseData<String> responseData = executeRequest(httpClient, request, count);
 
 		bucket.addResponse(responseData);
 
@@ -56,8 +59,9 @@ final class Task implements Callable<ResponseData<String>> {
 		}
 	}
 
-	private ResponseData<String> executeRequest(final HttpClient httpClient, final HttpRequest request) {
-		LOG.debugf("Performing request to %s", request.uri());
+	private ResponseData<String> executeRequest(final HttpClient httpClient, final HttpRequest request,
+			int count) {
+		LOG.debugf("Performing request %010d to %s", count, request.uri());
 		final Instant startTime = Instant.now();
 		Instant endTime;
 		HttpResponse<String> response = null;
@@ -66,13 +70,14 @@ final class Task implements Callable<ResponseData<String>> {
 			response = httpClient.send(request, BodyHandlers.ofString());
 		} catch (IOException | InterruptedException e) {
 			exception = e;
-			LOG.debugf("Request to %s failed with message %s", request.uri(), e);
+			LOG.debugf("Request %010d to %s failed with message %s", count, request.uri(), e);
 		} finally {
 			endTime = Instant.now();
 		}
 		final ResponseData<String> responseData = new ResponseData<String>(request, response, startTime, endTime,
-				exception);
-		LOG.debugf("Request to %s completed", request.uri());
+				exception, count);
+
+		LOG.debugf("Request %010d to %s completed", count, request.uri());
 
 		return responseData;
 	}

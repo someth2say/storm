@@ -1,4 +1,4 @@
-package org.someth2say.storm.stats;
+package org.someth2say.storm.stat;
 
 import java.util.Map;
 

@@ -1,4 +1,4 @@
-package org.someth2say.storm.stats;
+package org.someth2say.storm.stat;
 
 import java.util.Collections;
 import java.util.List;
@@ -11,7 +11,7 @@ public enum Stats {
     RELATIVECOUNT(RelativeCountStat::new),
     RELATIVEDURATION(RelativeDurationStat::new),
     DURATIONSUM(DurationSumStat::new),
-    DURATIONSTATS(DurationStatsStat::new), 
+    DURATION(DurationStat::new), 
     ERRORS(ErrorsStat::new),
     TIME(TimeStat::new),
     HEADERS(HeadersStat::new);

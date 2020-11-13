@@ -19,7 +19,7 @@ import org.jboss.logging.Logger;
 import org.someth2say.storm.category.Categorizers;
 import org.someth2say.storm.configuration.Configuration;
 import org.someth2say.storm.configuration.PicocliConfigSource;
-import org.someth2say.storm.stats.Stats;
+import org.someth2say.storm.stat.Stats;
 import org.someth2say.storm.utils.SerializationUtils;
 
 import io.quarkus.runtime.QuarkusApplication;
@@ -111,7 +111,7 @@ public class Storm implements QuarkusApplication {
         final HttpClient httpClient = buildHttpClient();
         final ExecutorService pool = configuration.threads != null ? Executors.newFixedThreadPool(configuration.threads)
                 : Executors.newCachedThreadPool();
-        Integer repeat = configuration.repeat!=null?configuration.repeat:1;
+        Integer repeat = configuration.count!=null?configuration.count:1;
         for (int exec = 0; exec < repeat; exec++) {
             pool.submit(new Task(rootCategory, configuration, httpClient));
         }

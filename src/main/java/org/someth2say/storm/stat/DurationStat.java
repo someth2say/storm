@@ -1,4 +1,4 @@
-package org.someth2say.storm.stats;
+package org.someth2say.storm.stat;
 
 import java.time.Duration;
 import java.util.Collection;
@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 import org.someth2say.storm.Category;
 import org.someth2say.storm.ResponseData;
 
-public class DurationStatsStat implements Stat {
+public class DurationStat implements Stat {
 
     public Duration minDuration = Duration.ZERO;
     public Duration maxDuration = Duration.ZERO;
@@ -19,18 +19,17 @@ public class DurationStatsStat implements Stat {
 
     @Override
     public Map<Object, Object> getStatResults() {
-       return Map.of("min", this.minDuration,
-       "max",this.maxDuration,
-       "mean",this.mean,
-       "variance", this.variance,
-       "stdev",this.stdev);
+       return Map.of("duration.min", this.minDuration,
+       "duration.max",this.maxDuration,
+       "duration.mean",this.mean,
+       "duration.variance", this.variance,
+       "duration.stdev",this.stdev);
     }
     
     @Override
     public synchronized void computeStep(Category bucket, ResponseData<String> responseData) {
         Duration responseDuration = responseData.getDuration();
-        minDuration = (minDuration == Duration.ZERO || minDuration.compareTo(responseDuration) > 0) ? responseDuration
-                : minDuration;
+        minDuration = (minDuration == Duration.ZERO || minDuration.compareTo(responseDuration) > 0) ? responseDuration : minDuration;
         maxDuration = maxDuration.compareTo(responseDuration) < 0 ? responseDuration : maxDuration;
     }
 
@@ -43,14 +42,14 @@ public class DurationStatsStat implements Stat {
                     .collect(Collectors.toList());
             mean = durations.stream().reduce(Duration.ZERO, (d1, d2) -> d1.plus(d2)).dividedBy(numResponses);
             variance = durations.stream().mapToLong(d -> d.toMillis()).map(m -> m - mean.toMillis()).map(m -> m * m)
-                    .sum()/1000;
+                    .sum(); // /1000;
             stdev = Math.sqrt(variance / numResponses*1.0);
         }
     }
 
     @Override
     public Stat newInstance() {
-        return new DurationStatsStat();
+        return new DurationStat();
     }
 
 }

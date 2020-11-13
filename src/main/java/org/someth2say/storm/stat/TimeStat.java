@@ -1,4 +1,4 @@
-package org.someth2say.storm.stats;
+package org.someth2say.storm.stat;
 
 import java.time.Instant;
 import java.util.Map;
@@ -13,8 +13,8 @@ public class TimeStat implements Stat {
 
     @Override
     public Map<Object, Object> getStatResults() {
-       return Map.of("start", this.startTime,
-       "end",this.endTime);
+       return Map.of("time.start", this.startTime,
+       "time.end",this.endTime);
     }
     
     @Override

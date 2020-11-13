@@ -16,8 +16,8 @@ import org.jboss.logging.Logger;
 import org.someth2say.storm.category.Categorizer;
 import org.someth2say.storm.category.Categorizers;
 import org.someth2say.storm.configuration.Configuration;
-import org.someth2say.storm.stats.Stat;
-import org.someth2say.storm.stats.Stats;
+import org.someth2say.storm.stat.Stat;
+import org.someth2say.storm.stat.Stats;
 import org.someth2say.storm.utils.SerializationUtils;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
@@ -42,7 +42,7 @@ public class Category {
     }
 
     public void addResponse(final ResponseData<String> responseData) {
-        LOG.debugf("Adding response from %s to category", responseData.request.uri());
+        LOG.debugf("Adding response %010d from %s to category", responseData.requestNum, responseData.request.uri());
         // 1.- Add response
         responseDatas.add(responseData);
         // 2.- Update stats
@@ -51,7 +51,7 @@ public class Category {
 
     private void updateStats(final ResponseData<String> response) {
         statObjs.forEach(stat -> {
-            LOG.debugf("Computing stat %s", stat.getClass().getSimpleName());
+            LOG.debugf("Computing stat %s for response %010d", stat.getClass().getSimpleName(), response.requestNum);
             stat.computeStep(this, response);
         });
     }

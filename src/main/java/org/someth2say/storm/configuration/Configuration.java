@@ -25,8 +25,8 @@ public class Configuration {
     public Integer threads = null;
 
     @Positive
-    @Option(names = { "-r", "--repeat" }, description = "How many times execute the request")
-    public Integer repeat = null;
+    @Option(names = { "-c", "--count" }, description = "How many times execute the request")
+    public Integer count = null;
 
     @Option(names = { "-o", "--order" }, description = "Strategy for picking the next URL from the list.")
     public Order order = null;//
@@ -50,7 +50,7 @@ public class Configuration {
     @Option(names = { "--httpVersion" }, description = "HTTP Version to use for clients.")
     public Version httpVersion = null;
 
-    @Option(names = { "-c", "--categorizers" }, description = "Categorizers to use to split response data.")
+    @Option(names = { "--cat", "--categorizers" }, description = "Categorizers to use to split response data.")
     public List<String> categorizers = null;
 
     @Option(names = { "-s", "--stats" }, description = "Stats generated for each category bucket.")

@@ -1,22 +1,23 @@
-package org.someth2say.storm.stats;
+package org.someth2say.storm.stat;
 
-import java.time.Duration;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
 
 import org.someth2say.storm.Category;
 import org.someth2say.storm.ResponseData;
 
-public class DurationSumStat implements Stat {
+public class URLSStat implements Stat {
 
-    public Duration durationsum = Duration.ZERO;
-
+    public Collection<String> urls = new HashSet<>();
     @Override
     public Map<Object, Object> getStatResults() {
-       return Map.of("duration", this.durationsum);
+       return Map.of("urls", this.urls);
     }
+    
     @Override
     public synchronized void computeStep(Category bucket, ResponseData<String> responseData) {
-        durationsum = durationsum.plus(responseData.getDuration());
+        urls.add(responseData.request.uri().toString());
     }
 
     @Override
