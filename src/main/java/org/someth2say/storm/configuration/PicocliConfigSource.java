@@ -1,6 +1,7 @@
 package org.someth2say.storm.configuration;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,6 +31,7 @@ public class PicocliConfigSource implements ConfigSource {
     public static ParseResult parseResult;
 
     public static void init(final String[] args, final Class<?> commandClass) throws Exception {
+        LOG.debugf("Initializing Picocli with args %s", Arrays.toString(args));
         init(args, commandClass, getConfigPrefixFromConfigClass(commandClass),
                 getPositionalArgsNameFromCommandClass(commandClass));
     }

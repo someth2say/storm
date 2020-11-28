@@ -1,31 +1,32 @@
-#  dump-config: 
-urls: 
-   - http://www.thisurldoesnotexits.com
-   - http://metaphorpsum.com/paragraphs/1/1
-   - http://httpbin.org/status/400
-#  proxy: "proxy.example.com:80"
-#  connect-timeout: 100
-request-timeout: 500
-#  redirect: NORMAL or ALWAYS or NEVER
-#  order: RANDOM or SEQUENTIAL or ROUNDROBIN
-#  threads: 10
-#  repeat: 10
-#  delay: 100
-#categorizers:
-  # - httpcode
-  # - regexpmatch(.*( (a|the) ).*)
-  # - body
-  # - header(server)
-  # - URL
-  # - durationhistogram(5)
-  # - timehistogram(200)
-#stats:
-#  - urls
-#  - count
-    # - errors
-    # - relativecount
-    # - relativeduration
-    # - time
-    # - durationsum
-    # - headers
-#  - durationstats
+storm:
+   #  dump-config:
+   urls:
+      - http://www.thisurldoesnotexits.com
+      - http://metaphorpsum.com/paragraphs/1/1
+      - http://httpbin.org/status/400
+   #  proxy: "proxy.example.com:80"
+   #  connect-timeout: 100
+   request-timeout: 500
+   #  redirect: NORMAL or ALWAYS or NEVER
+   #  order: RANDOM or SEQUENTIAL or ROUNDROBIN
+   #  threads: 10
+   #  repeat: 10
+   #  delay: 100
+   categorizers:
+     - httpcode
+     # - regexpmatch(.*( (a|the) ).*)
+     # - body
+     # - header(server)
+     # - URL
+     # - durationhistogram(5)
+     # - timehistogram(200)
+   #stats:
+   #  - urls
+   #  - count
+       # - errors
+       # - relativecount
+       # - relativeduration
+       # - time
+       # - durationsum
+       # - headers
+   #  - durationstats

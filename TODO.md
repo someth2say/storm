@@ -5,3 +5,5 @@
 - Duration stats: confidence intervals
 - stat: value for a single header, i.e headervalue(server)
 - Implement HTTP authentication (basic?)
+- Add CI and automatic releases.
+- Study impact of calculating stat steps and consider removing them and leaving only the final calculations.

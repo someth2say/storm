@@ -4,6 +4,7 @@ import java.net.ProxySelector;
 import java.net.http.HttpClient;
 import java.net.http.HttpClient.Builder;
 import java.time.Duration;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -11,7 +12,6 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import javax.validation.Validator;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
@@ -25,16 +25,16 @@ import org.someth2say.storm.utils.SerializationUtils;
 import io.quarkus.runtime.QuarkusApplication;
 import picocli.CommandLine;
 
+import static org.someth2say.storm.utils.ConsoleColors.*;
+
 @Singleton
 public class Storm implements QuarkusApplication {
 
     private static final Logger LOG = Logger.getLogger(Storm.class);
+    public static final String RESET = "\033[0m";  // Text Reset
 
     @Inject
     Configuration configuration;
-
-    @Inject
-    Validator validator;
 
     @Override
     public int run(final String... args) throws Exception {
@@ -46,6 +46,10 @@ public class Storm implements QuarkusApplication {
         return 0;
     }
 
+    private boolean nullOrEmpty(final Collection collectio) {
+        return collectio == null || collectio.isEmpty();
+    }
+
     public Category runAsCategory(String... args) throws Exception {
 
         CommandLine commandLine = PicocliConfigSource.commandLine;
@@ -55,9 +59,12 @@ public class Storm implements QuarkusApplication {
             printVersion(commandLine);
         } else if (configuration.dumpConfig) {
             printConfig();
-        } else if (configuration.urls == null || configuration.urls.isEmpty()) {
+        } else if (nullOrEmpty(configuration.urls)) {
             printHelp(commandLine);
-            System.out.println("Please provide at least one URL.");
+            println(RED, "Please provide at least ", RED_BOLD, "one URL.");
+        } else if (nullOrEmpty(configuration.categorizers) && nullOrEmpty(configuration.stats)) {
+            printHelp(commandLine);
+            println(RED, "Please provide at least ", RED_BOLD, "one stat", RED, " or ", RED_BOLD, "one categorizer", RED, ".");
         } else {
             return main();
         }
@@ -80,28 +87,21 @@ public class Storm implements QuarkusApplication {
         System.out.println("Available stats: " + List.of(Stats.values()));
     }
 
-    // private void validateConfiguration() {
-    // final Set<ConstraintViolation<Configuration>> violations =
-    // validator.validate(configuration);
-    // if (!violations.isEmpty()) {
-    // violations.stream().map(v -> v.getPropertyPath() + " " +
-    // v.getMessage()).forEach(LOG::error);
-    // throw new RuntimeException();
-    // }
-    // }
-
     public Category main() throws Exception {
-
+        LOG.debugf("Starting main thread");
         // 0.- Prepare inputs
         final Category rootBucket = new Category(configuration, null);
 
         // 1.- Execute all tasks and gather independent stats.
+        LOG.debugf("Starting worker threads");
         executeRequests(rootBucket);
 
         // 2.- Perform finalization step for stats computation
+        LOG.debugf("Computing reesponse stats");
         rootBucket.finalizeStats();
 
         // 3.- Categorize buckets
+        LOG.debugf("Creating category hierarchy");
         rootBucket.categorize(configuration);
 
         return rootBucket;
@@ -111,7 +111,7 @@ public class Storm implements QuarkusApplication {
         final HttpClient httpClient = buildHttpClient();
         final ExecutorService pool = configuration.threads != null ? Executors.newFixedThreadPool(configuration.threads)
                 : Executors.newCachedThreadPool();
-        Integer repeat = configuration.count!=null?configuration.count:1;
+        Integer repeat = configuration.count != null ? configuration.count : 1;
         for (int exec = 0; exec < repeat; exec++) {
             pool.submit(new Task(rootCategory, configuration, httpClient));
         }

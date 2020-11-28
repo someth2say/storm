@@ -6,15 +6,17 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public enum Stats {
-    URLS(URLSStat::new),
-    COUNT(CountStat::new), 
+    COUNT(CountStat::new),
+    DURATION(DurationStat::new),
+    DURATIONSUM(DurationSumStat::new),
+    ERRORS(ErrorsStat::new),
+    HEADERS(HeadersStat::new),
+    ID(RequestIdStat::new),
     RELATIVECOUNT(RelativeCountStat::new),
     RELATIVEDURATION(RelativeDurationStat::new),
-    DURATIONSUM(DurationSumStat::new),
-    DURATION(DurationStat::new), 
-    ERRORS(ErrorsStat::new),
     TIME(TimeStat::new),
-    HEADERS(HeadersStat::new);
+    URLS(URLSStat::new),
+    ;
 
     private Supplier<Stat> supplier;
 

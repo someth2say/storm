@@ -13,7 +13,6 @@ import picocli.CommandLine.Model.OptionSpec;
 
 @QuarkusMain
 public class StormMain {
-
     public static void main(String[] args) {
         try {
             PicocliConfigSource.init(args, Configuration.class);
