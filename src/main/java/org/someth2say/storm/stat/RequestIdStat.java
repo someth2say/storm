@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class RequestIdStat implements Stat {
 
-    List<Integer> ids = new ArrayList<>();
+    List<Integer> ids = Collections.synchronizedList(new ArrayList<>());
 
     @Override
     public void computeStep(Category bucket, ResponseData<String> responseData) {
