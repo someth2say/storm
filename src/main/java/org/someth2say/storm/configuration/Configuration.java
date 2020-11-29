@@ -25,8 +25,12 @@ public class Configuration {
     public Integer threads = null;
 
     @Positive
-    @Option(names = {"-c", "--count"}, description = "How many times execute the request")
+    @Option(names = {"-c", "--count"}, description = "How many times execute the requests")
     public Integer count = null;
+
+    @Positive
+    @Option(names = {"-d", "--duration"}, description = "Milliseconds since the first request until the last accepted response.")
+    public Integer duration = null;
 
     @Option(names = {"-o", "--order"}, description = "Strategy for picking the next URL from the list.")
     public Order order = null;
@@ -57,7 +61,7 @@ public class Configuration {
     public List<String> stats = null;
 
     @Positive
-    @Option(names = {"-d", "--delay"}, description = "Delay time after a response")
+    @Option(names = {"--delay"}, description = "Delay time after a response")
     public Integer delay = null;
 
     @JsonIgnore

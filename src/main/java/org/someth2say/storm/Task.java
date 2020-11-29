@@ -33,29 +33,31 @@ final class Task implements Callable<ResponseData<String>> {
 
 	@Override
 	public ResponseData<String> call() {
-		Order order = configuration.order != null ? configuration.order : Order.ROUNDROBIN;
-		List<URI> urls = configuration.urls != null ? configuration.urls : Collections.emptyList();
-		int repeat = configuration.count != null ? configuration.count : 10;
-		int count = requestCounter.getAndIncrement();
-		final URI nextURL = order.getNextURL(urls, repeat, count);
+		try {
+			Order order = configuration.order != null ? configuration.order : Order.ROUNDROBIN;
+			List<URI> urls = configuration.urls != null ? configuration.urls : Collections.emptyList();
+			int repeat = configuration.count != null ? configuration.count : 10;
+			int count = requestCounter.getAndIncrement();
+			final URI nextURL = order.getNextURL(urls, repeat, count);
 
-		final HttpRequest request = createRequest(nextURL);
+			final HttpRequest request = createRequest(nextURL);
 
-		final ResponseData<String> responseData = executeRequest(httpClient, request, count);
+			final ResponseData<String> responseData = executeRequest(httpClient, request, count);
 
-		bucket.addResponse(responseData);
+			bucket.addResponse(responseData);
 
-		performDelay();
+			performDelay();
 
-		return responseData;
+			return responseData;
+		} catch (InterruptedException e){
+			LOG.warnf("Tread %s interrupted", Thread.currentThread().getName());
+			return null;
+		}
 	}
 
-	private void performDelay() {
+	private void performDelay() throws InterruptedException {
 		if (configuration.delay != null) {
-			try {
-				Thread.sleep(this.configuration.delay);
-			} catch (final InterruptedException e) {
-			}
+			Thread.sleep(this.configuration.delay);
 		}
 	}
 

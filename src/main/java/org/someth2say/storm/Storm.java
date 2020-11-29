@@ -6,9 +6,7 @@ import java.net.http.HttpClient.Builder;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -109,14 +107,40 @@ public class Storm implements QuarkusApplication {
 
     private void executeRequests(final Category rootCategory) throws InterruptedException {
         final HttpClient httpClient = buildHttpClient();
-        final ExecutorService pool = configuration.threads != null ? Executors.newFixedThreadPool(configuration.threads)
-                : Executors.newCachedThreadPool();
-        Integer repeat = configuration.count != null ? configuration.count : 1;
-        for (int exec = 0; exec < repeat; exec++) {
+        final ExecutorService pool = Executors.newFixedThreadPool(configuration.threads != null?configuration.threads:Runtime.getRuntime().availableProcessors());
+
+        int repeat;
+        int time;
+        if (configuration.count==null && configuration.duration==null){
+            LOG.warn("No count nor duration provided. No request will be sent.");
+            repeat=0;
+            time=0;
+        } else {
+            repeat = configuration.count!=null?configuration.count:Integer.MAX_VALUE;
+            time = configuration.duration!=null?configuration.duration:Integer.MAX_VALUE;
+        }
+
+        long end = System.currentTimeMillis() + time;
+        LOG.warnf("Starting at %d, planned end at %s", System.currentTimeMillis(), end);
+        int maxQueueSize=0;
+        while (System.currentTimeMillis() < end && repeat-->0) {
+            int queueSize = ((ThreadPoolExecutor) pool).getQueue().size();
+            maxQueueSize=Math.max(maxQueueSize, queueSize);
+            if (queueSize>1000) {
+                LOG.warnf("Queue size too big! %d", queueSize);
+                Thread.sleep(100);
+            }
             pool.submit(new Task(rootCategory, configuration, httpClient));
         }
         pool.shutdown();
-        pool.awaitTermination(30, TimeUnit.SECONDS);
+        long await = Math.max(end - System.currentTimeMillis(), 0);
+        LOG.warnf("Shutdown at %s. Awaiting for termination %d millis", System.currentTimeMillis(), await);
+        if (!pool.awaitTermination(await, TimeUnit.MILLISECONDS)) {
+            LOG.warnf("Termination failed. Shutting down now! %d", System.currentTimeMillis());
+            pool.shutdownNow();
+            pool.awaitTermination(30, TimeUnit.SECONDS);
+        }
+        LOG.warnf("Stopping at %d. Max queue size: %d", System.currentTimeMillis(), maxQueueSize);
     }
 
     private HttpClient buildHttpClient() {

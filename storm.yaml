@@ -6,7 +6,7 @@ storm:
       - http://httpbin.org/status/400
    #  proxy: "proxy.example.com:80"
    #  connect-timeout: 100
-   request-timeout: 500
+   # request-timeout: 500
    #  redirect: NORMAL or ALWAYS or NEVER
    #  order: RANDOM or SEQUENTIAL or ROUNDROBIN
    #  threads: 10

@@ -43,8 +43,8 @@ public class StormMain {
 
     public static void exitHandler(Integer exitCode, Throwable exception) {
         if (exception!=null){
-            System.err.println("Unhandled exception: " + getDeepCause(exception));
-            //exception.printStackTrace();
+            System.err.printf("Unhandled exception (%s): %s",exception.getClass().getName() ,getDeepCause(exception));
+            exception.printStackTrace();
         }
         System.exit(exitCode);
     }

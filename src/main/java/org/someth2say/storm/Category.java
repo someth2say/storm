@@ -44,6 +44,9 @@ public class Category {
     public void addResponse(final ResponseData<String> responseData) {
         LOG.debugf("Adding response %010d from %s to category", responseData.requestNum, responseData.request.uri());
         // 1.- Add response
+        responseDatas.stream().filter(rd->rd.requestNum==responseData.requestNum).findAny().ifPresent(rd->
+                LOG.errorf("Another response with the same number added: %d", rd.requestNum));
+
         responseDatas.add(responseData);
         // 2.- Update stats
         updateStats(responseData);
