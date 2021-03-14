@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.someth2say.storm.Category;
 import org.someth2say.storm.ResponseData;
 import org.someth2say.storm.utils.InstantComparator;
 import org.someth2say.storm.utils.Pair;
@@ -64,7 +63,7 @@ public class TimeHistogramCategorizer implements Categorizer {
     }
 
     @Override
-    public Optional<String> getCategoryKeyFor(ResponseData<String> responseData) {
+    public Optional<String> getCategoryKeyFor(ResponseData responseData) {
         return slices.stream().filter(slice -> sliceContains(slice, responseData.endTime)).map(Pair::toString)
                 .findFirst();
     }

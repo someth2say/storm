@@ -3,8 +3,8 @@ package org.someth2say.storm.stat;
 import java.time.Instant;
 import java.util.Map;
 
-import org.someth2say.storm.Category;
 import org.someth2say.storm.ResponseData;
+import org.someth2say.storm.category.Category;
 
 public class TimeStat implements Stat {
 
@@ -14,11 +14,11 @@ public class TimeStat implements Stat {
     @Override
     public Map<Object, Object> getStatResults() {
        return Map.of("time.start", this.startTime,
-       "time.end",this.endTime);
+       "time.end",this.endTime, "time.span", java.time.Duration.between(this.startTime, this.endTime));
     }
     
     @Override
-    public synchronized void computeStep(Category bucket, ResponseData<String> responseData) {
+    public synchronized void computeStep(Category bucket, ResponseData responseData) {
         startTime = responseData.startTime.isBefore(startTime) ? responseData.startTime : startTime;
         endTime = responseData.endTime.isAfter(endTime) ? responseData.endTime : endTime;
     }

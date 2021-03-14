@@ -15,7 +15,7 @@ public class RegExpMatchCategorizer implements Categorizer {
     }
 
     @Override
-    public Optional<String> getCategoryKeyFor(final ResponseData<String> responseData) {
+    public Optional<String> getCategoryKeyFor(final ResponseData responseData) {
         if (responseData.response != null) {
             Matcher matcher = pattern.matcher(responseData.response.body());
             if (matcher.matches()) {

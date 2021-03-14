@@ -1,19 +1,18 @@
 package org.someth2say.storm.stat;
 
-import org.someth2say.storm.Category;
 import org.someth2say.storm.ResponseData;
+import org.someth2say.storm.category.Category;
 import org.someth2say.storm.utils.Pair;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
-public class RequestIdStat implements Stat {
+public class ThreadStat implements Stat {
 
-    List<Integer> ids = Collections.synchronizedList(new ArrayList<>());
+    SortedSet<Long> threads = Collections.synchronizedSortedSet(new TreeSet<>());
 
     @Override
-    public void computeStep(Category bucket, ResponseData<String> responseData) {
-        ids.add(responseData.requestNum);
+    public void computeStep(Category bucket, ResponseData responseData) {
+        threads.add(Thread.currentThread().getId());
     }
 
     @Override
@@ -21,26 +20,24 @@ public class RequestIdStat implements Stat {
     }
 
     public Stat newInstance() {
-        return new RequestIdStat();
+        return new ThreadStat();
     }
 
     @Override
     public Map<Object, Object> getStatResults() {
-        if (ids.isEmpty())
+        if (threads.isEmpty())
             return Collections.emptyMap();
 
-        if (ids.size() == 1) {
-            return Map.of("ids", ids.toString());
+        if (threads.size() == 1) {
+            return Map.of("threads", threads.toString());
         }
 
         List<Group> result = new ArrayList<>();
-
-        Collections.sort(this.ids);
-        Integer head = ids.get(0);
-        Group group = new Group(head, head);
-        for (int i = 1; i < ids.size(); i++) {
-            Integer currentId = ids.get(i);
-            if (currentId == group.rhs + 1) {
+        Group group=null;
+        for (Long currentId : threads) {
+            if (group==null){
+                group = new Group(currentId,currentId);
+            } else if (currentId == group.rhs + 1) {
                 group.rhs = currentId;
             } else {
                 result.add(group);
@@ -48,12 +45,12 @@ public class RequestIdStat implements Stat {
             }
         }
         result.add(group);
-        return Map.of("ids", result.toString());
+        return Map.of("threads", result.toString());
     }
 
-    private class Group extends Pair<Integer,Integer>{
+    private class Group extends Pair<Long,Long>{
 
-        public Group(Integer lhs, Integer rhs) {
+        public Group(Long lhs, Long rhs) {
             super(lhs, rhs);
         }
 

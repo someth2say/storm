@@ -1,4 +1,4 @@
-package org.someth2say.storm;
+package org.someth2say.storm.category;
 
 import java.util.Collection;
 import java.util.Deque;
@@ -13,8 +13,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import org.jboss.logging.Logger;
-import org.someth2say.storm.category.Categorizer;
-import org.someth2say.storm.category.Categorizers;
+import org.someth2say.storm.ResponseData;
+import org.someth2say.storm.StormCallable;
 import org.someth2say.storm.configuration.Configuration;
 import org.someth2say.storm.stat.Stat;
 import org.someth2say.storm.stat.Stats;
@@ -23,25 +23,26 @@ import org.someth2say.storm.utils.SerializationUtils;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class Category {
 
-    private static final Logger LOG = Logger.getLogger(Task.class);
+    private static final Logger LOG = Logger.getLogger(StormCallable.class);
 
     @JsonIgnore
     public final Category parent;
 
     @JsonIgnore
-    public final Deque<ResponseData<String>> responseDatas = new ConcurrentLinkedDeque<>();
+    public final Deque<ResponseData> responseDatas = new ConcurrentLinkedDeque<>();
 
     @JsonIgnore
     public final Collection<Stat> statObjs;
-    public Map<Object, Object> stats = new LinkedHashMap<>();
-    public Map<Object, Category> categories = new LinkedHashMap<>();
+    
+    public final Map<Object, Object> stats = new LinkedHashMap<>();
+    public final Map<Object, Category> categories = new LinkedHashMap<>();
 
     public Category(final Configuration configuration, final Category parent) {
         this.parent = parent;
         this.statObjs = Stats.buildStats(configuration.stats);
     }
 
-    public void addResponse(final ResponseData<String> responseData) {
+    public void addResponse(final ResponseData responseData) {
         LOG.debugf("Adding response %010d from %s to category", responseData.requestNum, responseData.request.uri());
         // 1.- Add response
         responseDatas.stream().filter(rd->rd.requestNum==responseData.requestNum).findAny().ifPresent(rd->
@@ -52,7 +53,7 @@ public class Category {
         updateStats(responseData);
     }
 
-    private void updateStats(final ResponseData<String> response) {
+    private void updateStats(final ResponseData response) {
         statObjs.forEach(stat -> {
             LOG.debugf("Computing stat %s for response %010d", stat.getClass().getSimpleName(), response.requestNum);
             stat.computeStep(this, response);

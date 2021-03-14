@@ -4,8 +4,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.someth2say.storm.Category;
 import org.someth2say.storm.ResponseData;
+import org.someth2say.storm.category.Category;
 
 public class ErrorsStat implements Stat {
 
@@ -17,7 +17,7 @@ public class ErrorsStat implements Stat {
     }
     
     @Override
-    public synchronized void computeStep(Category bucket, ResponseData<String> responseData) {
+    public synchronized void computeStep(Category bucket, ResponseData responseData) {
         if (responseData.exception!=null){
             exceptions.add(responseData.exception.getClass().getName()+"("+responseData.exception.getMessage()+")");
         }

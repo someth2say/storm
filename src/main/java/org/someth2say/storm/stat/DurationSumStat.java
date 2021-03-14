@@ -3,8 +3,8 @@ package org.someth2say.storm.stat;
 import java.time.Duration;
 import java.util.Map;
 
-import org.someth2say.storm.Category;
 import org.someth2say.storm.ResponseData;
+import org.someth2say.storm.category.Category;
 
 public class DurationSumStat implements Stat {
 
@@ -15,7 +15,7 @@ public class DurationSumStat implements Stat {
        return Map.of("duration", this.durationsum);
     }
     @Override
-    public synchronized void computeStep(Category bucket, ResponseData<String> responseData) {
+    public synchronized void computeStep(Category bucket, ResponseData responseData) {
         durationsum = durationsum.plus(responseData.getDuration());
     }
 

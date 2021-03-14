@@ -5,7 +5,7 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.time.Instant;
 
-public class ResponseData<T> {
+public class ResponseData {
 
     final public Instant startTime;
     final public Instant endTime;

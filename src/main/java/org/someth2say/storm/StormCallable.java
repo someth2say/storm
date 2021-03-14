@@ -8,43 +8,39 @@ import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Collections;
-import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.jboss.logging.Logger;
+import org.someth2say.storm.category.Category;
 import org.someth2say.storm.configuration.Configuration;
-import org.someth2say.storm.configuration.Order;
 
-final class Task implements Callable<ResponseData<String>> {
-	private static final Logger LOG = Logger.getLogger(Task.class);
+public final class StormCallable implements Callable<ResponseData> {
+	private static final Logger LOG = Logger.getLogger(StormCallable.class);
     private final static AtomicInteger requestCounter = new AtomicInteger();
 
 	private final Configuration configuration;
-	private final Category bucket;
+	private final Category category;
 	private final HttpClient httpClient;
 
-	public Task(final Category rootBucket, final Configuration configuration, final HttpClient httpClient) {
-		this.bucket = rootBucket;
+	public StormCallable(final Category rootBucket, final Configuration configuration, final HttpClient httpClient) {
+		this.category = rootBucket;
 		this.configuration = configuration;
 		this.httpClient = httpClient;
 	}
 
 	@Override
-	public ResponseData<String> call() {
+	public ResponseData call() {
 		try {
-			Order order = configuration.order != null ? configuration.order : Order.ROUNDROBIN;
-			List<URI> urls = configuration.urls != null ? configuration.urls : Collections.emptyList();
-			int repeat = configuration.count != null ? configuration.count : 10;
+
 			int count = requestCounter.getAndIncrement();
-			final URI nextURL = order.getNextURL(urls, repeat, count);
+			final URI nextURL = configuration.order.getNextURL(configuration.urls, configuration.count, count);
 
 			final HttpRequest request = createRequest(nextURL);
 
-			final ResponseData<String> responseData = executeRequest(httpClient, request, count);
+			final ResponseData responseData = executeRequest(httpClient, request, count);
 
-			bucket.addResponse(responseData);
+			category.addResponse(responseData);
 
 			performDelay();
 
@@ -61,7 +57,7 @@ final class Task implements Callable<ResponseData<String>> {
 		}
 	}
 
-	private ResponseData<String> executeRequest(final HttpClient httpClient, final HttpRequest request,
+	private ResponseData executeRequest(final HttpClient httpClient, final HttpRequest request,
 			int count) {
 		LOG.debugf("Performing request %010d to %s", count, request.uri());
 		final Instant startTime = Instant.now();
@@ -76,7 +72,7 @@ final class Task implements Callable<ResponseData<String>> {
 		} finally {
 			endTime = Instant.now();
 		}
-		final ResponseData<String> responseData = new ResponseData<String>(request, response, startTime, endTime,
+		final ResponseData responseData = new ResponseData(request, response, startTime, endTime,
 				exception, count);
 
 		LOG.debugf("Request %010d to %s completed", count, request.uri());

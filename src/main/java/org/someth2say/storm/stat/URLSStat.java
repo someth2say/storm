@@ -4,8 +4,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 
-import org.someth2say.storm.Category;
 import org.someth2say.storm.ResponseData;
+import org.someth2say.storm.category.Category;
 
 public class URLSStat implements Stat {
 
@@ -16,7 +16,7 @@ public class URLSStat implements Stat {
     }
     
     @Override
-    public synchronized void computeStep(Category bucket, ResponseData<String> responseData) {
+    public synchronized void computeStep(Category bucket, ResponseData responseData) {
         urls.add(responseData.request.uri().toString());
     }
 

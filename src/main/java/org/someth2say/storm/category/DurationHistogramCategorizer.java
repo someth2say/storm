@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.someth2say.storm.Category;
 import org.someth2say.storm.ResponseData;
 import org.someth2say.storm.utils.Pair;
 
@@ -42,7 +41,7 @@ public class DurationHistogramCategorizer implements Categorizer {
     private void calculateSlices(final Category bucket) {
         var minDuration = Duration.ofSeconds(Long.MAX_VALUE, 0);
         var maxDuration = Duration.ZERO;
-        for (ResponseData<String> responseData : bucket.responseDatas) {
+        for (ResponseData responseData : bucket.responseDatas) {
             var duration = responseData.getDuration();
             minDuration = (duration.compareTo(minDuration) < 0) ? duration : minDuration;
             maxDuration = (duration.compareTo(maxDuration) > 0) ? duration : maxDuration;
@@ -60,7 +59,7 @@ public class DurationHistogramCategorizer implements Categorizer {
     }
 
     @Override
-    public Optional<String> getCategoryKeyFor(ResponseData<String> responseData) {
+    public Optional<String> getCategoryKeyFor(ResponseData responseData) {
         var duration = responseData.getDuration();
         return slices.stream().filter(slice -> sliceContains(slice, duration)).map(Pair::toString).findFirst();
     }

@@ -11,9 +11,10 @@ public enum Stats {
     DURATIONSUM(DurationSumStat::new),
     ERRORS(ErrorsStat::new),
     HEADERS(HeadersStat::new),
-    ID(RequestIdStat::new),
+    ID(IdStat::new),
     RELATIVECOUNT(RelativeCountStat::new),
     RELATIVEDURATION(RelativeDurationStat::new),
+    THREAD(ThreadStat::new),
     TIME(TimeStat::new),
     URLS(URLSStat::new),
     ;

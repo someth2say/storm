@@ -2,13 +2,17 @@ package org.someth2say.storm;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
+import org.someth2say.storm.category.Categorizers;
 import org.someth2say.storm.configuration.Configuration;
 import org.someth2say.storm.configuration.FileConfigurationSource;
 import org.someth2say.storm.configuration.PicocliConfigSource;
+import org.someth2say.storm.stat.Stats;
 
 import io.quarkus.runtime.Quarkus;
 import io.quarkus.runtime.annotations.QuarkusMain;
+import picocli.CommandLine;
 import picocli.CommandLine.Model.OptionSpec;
 
 @QuarkusMain
@@ -17,7 +21,8 @@ public class StormMain {
         try {
             PicocliConfigSource.init(args, Configuration.class);
             loadExtraConfig();
-            Quarkus.run(Storm.class, StormMain::exitHandler, args);
+            argsSanityCheck();
+            Quarkus.run(StormQuarkusApplication.class, StormMain::exitHandler, args);
         } catch (Exception e) {
             System.err.println("Error starting STORM: " + getDeepCause(e));
         }
@@ -31,6 +36,30 @@ public class StormMain {
         }
     }
 
+    private static void argsSanityCheck(){
+        final CommandLine commandLine = PicocliConfigSource.commandLine;
+        if (commandLine.isUsageHelpRequested()) {
+            printHelp(commandLine);
+        } else if (commandLine.isVersionHelpRequested()) {
+            commandLine.printVersionHelp(System.out);
+        } 
+    }
+
+    private static void printHelp(final CommandLine commandLine) {
+        commandLine.usage(System.out);
+        System.out.println();
+        System.out.println("Available categorizers: " + List.of(Categorizers.values()));
+        System.out.println("Available stats: " + List.of(Stats.values()));
+    }
+
+    public static void exitHandler(Integer exitCode, Throwable exception) {
+        if (exception!=null){
+            System.err.printf("Unhandled exception (%s): %s",exception.getClass().getName() ,getDeepCause(exception));
+            exception.printStackTrace();
+        }
+        System.exit(exitCode);
+    }
+
     private static String getDeepCause(Throwable e) {
         String msg = e.getMessage();
         Throwable cause = e.getCause();
@@ -41,12 +70,6 @@ public class StormMain {
         return msg;
     }
 
-    public static void exitHandler(Integer exitCode, Throwable exception) {
-        if (exception!=null){
-            System.err.printf("Unhandled exception (%s): %s",exception.getClass().getName() ,getDeepCause(exception));
-            exception.printStackTrace();
-        }
-        System.exit(exitCode);
-    }
+
 
 }

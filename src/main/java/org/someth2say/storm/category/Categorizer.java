@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.someth2say.storm.Category;
 import org.someth2say.storm.ResponseData;
 
 public interface Categorizer {
@@ -15,5 +14,5 @@ public interface Categorizer {
         .distinct().collect(Collectors.toList());
     }
 
-    Optional<String> getCategoryKeyFor(ResponseData<String> responseData);
+    Optional<String> getCategoryKeyFor(ResponseData responseData);
 }
