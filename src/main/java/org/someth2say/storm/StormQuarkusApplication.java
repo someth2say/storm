@@ -5,7 +5,6 @@ import javax.inject.Singleton;
 
 import org.someth2say.storm.category.Category;
 import org.someth2say.storm.configuration.Configuration;
-import org.someth2say.storm.utils.SerializationUtils;
 
 import io.quarkus.runtime.QuarkusApplication;
 
@@ -20,13 +19,17 @@ public class StormQuarkusApplication implements QuarkusApplication {
     @Override
     public int run(final String... args) throws Exception {
 
-        Category rootCategory = Storm.main(configuration);
+        Category rootCategory = main();
         if (rootCategory == null) {
             return -1;
         }
         System.out.println(rootCategory);
 
         return 0;
+    }
+
+    public Category main() throws Exception {
+        return Storm.main(configuration);
     }
 
 }

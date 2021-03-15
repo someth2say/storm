@@ -5,14 +5,12 @@ import static org.someth2say.storm.utils.ConsoleColors.RED_BOLD;
 import static org.someth2say.storm.utils.ConsoleColors.println;
 
 import java.net.ProxySelector;
-import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpClient.Builder;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -34,6 +32,7 @@ public class Storm {
 
     public static Category main(Configuration configuration) throws Exception {
         sanityChecks(configuration);
+
         if (configuration.dumpConfig) {
             System.out.println(SerializationUtils.toYAML(configuration));
         } 

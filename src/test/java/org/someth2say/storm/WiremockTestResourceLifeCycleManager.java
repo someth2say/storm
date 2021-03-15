@@ -6,8 +6,7 @@ import java.util.Map;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import io.quarkus.test.common.QuarkusTestResourceLifecycleManager;
 
-
-public class WiremockTestResourceLifeCycleManager implements QuarkusTestResourceLifecycleManager {  
+public class WiremockTestResourceLifeCycleManager implements QuarkusTestResourceLifecycleManager {
 
 	public static final String WIREMOCK_BASE_URL = "wiremock.baseUrl";
 	private WireMockServer wireMockServer;
@@ -15,14 +14,14 @@ public class WiremockTestResourceLifeCycleManager implements QuarkusTestResource
 	@Override
 	public Map<String, String> start() {
 		wireMockServer = new WireMockServer();
-		wireMockServer.start(); 
+		wireMockServer.start();
 		return Collections.singletonMap(WIREMOCK_BASE_URL, wireMockServer.baseUrl());
 	}
 
 	@Override
 	public void stop() {
 		if (null != wireMockServer) {
-			wireMockServer.stop();  
+			wireMockServer.stop();
 		}
 	}
 }

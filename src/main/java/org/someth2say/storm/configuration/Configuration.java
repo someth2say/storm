@@ -10,6 +10,9 @@ import java.util.List;
 import javax.validation.constraints.Positive;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.core.JsonProcessingException;
+
+import org.someth2say.storm.utils.SerializationUtils;
 
 import io.quarkus.arc.config.ConfigProperties;
 import picocli.CommandLine;
@@ -71,4 +74,14 @@ public class Configuration {
     @JsonIgnore
     @Option(names = {"--configFile"}, description = "Extra configuration file to load.")
     public File configFile = null;
+
+    @Override
+    public String toString() {
+        try {
+            return SerializationUtils.toYAML(this);
+        } catch (JsonProcessingException e) {
+            return "<< non-serializable >>";
+        }
+
+    }
 }

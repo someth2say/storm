@@ -22,10 +22,11 @@ storm:
   ## Those can be used to set default values
   # config-file: /Users/jordisola/Downloads/flare/storm.yaml
   dump-config: false
-#  urls:
+  urls:
 #  - http://www.thisurldoesnotexits.com
 #  - http://metaphorpsum.com/paragraphs/1/1
 #  - http://httpbin.org/status/400
+  - http://localhost:8080/status
   # proxy: "proxy.example.com:80"
   # connect-timeout: 100
   # request-timeout: 100
@@ -35,21 +36,21 @@ storm:
   # count: 100
   # duration: 1000
   # delay: 100
-#  categorizers:
-  #  - httpcode
+  categorizers:
+    - httpcode
   #  - regexpmatch(.*( (a|the) ).*)
   # - body
   #  - header(server)
 #    - URL
 #    - durationhistogram(5)
   #  - timehistogram(200)
-  stats:
+#  stats:
 #    - count
   #  - duration
   #  - durationsum
   #  - errors
   #  - headers
-    - id
+  #  - id
   #  - relativecount
   #  - relativeduration
   #  - time
