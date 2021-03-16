@@ -27,9 +27,4 @@ public class TimeStat implements Stat {
     public void computeEnd(Category bucket) {
     }
 
-    @Override
-    public Stat newInstance() {
-        return new TimeStat();
-    }
-
 }

@@ -19,10 +19,6 @@ public class IdStat implements Stat {
     public void computeEnd(Category bucket) {
     }
 
-    public Stat newInstance() {
-        return new IdStat();
-    }
-
     @Override
     public Map<Object, Object> getStatResults() {
         if (ids.isEmpty())

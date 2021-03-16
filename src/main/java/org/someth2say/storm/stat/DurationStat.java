@@ -47,9 +47,4 @@ public class DurationStat implements Stat {
         }
     }
 
-    @Override
-    public Stat newInstance() {
-        return new DurationStat();
-    }
-
 }

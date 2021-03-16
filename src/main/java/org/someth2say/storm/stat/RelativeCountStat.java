@@ -27,8 +27,4 @@ public class RelativeCountStat implements Stat {
         }
     }
 
-    public Stat newInstance() {
-        return new RelativeCountStat();
-    }
-
 }

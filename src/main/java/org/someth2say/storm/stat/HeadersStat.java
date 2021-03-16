@@ -26,8 +26,4 @@ public class HeadersStat implements Stat {
     public void computeEnd(Category bucket) {
     }
 
-    public Stat newInstance(){
-        return new CountStat();
-    }
-
 }

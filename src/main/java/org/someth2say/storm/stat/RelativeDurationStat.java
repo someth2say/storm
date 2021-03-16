@@ -30,8 +30,4 @@ public class RelativeDurationStat implements Stat {
         }
     }
 
-    public Stat newInstance() {
-        return new RelativeCountStat();
-    }
-
 }

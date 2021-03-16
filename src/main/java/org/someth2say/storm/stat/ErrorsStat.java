@@ -27,8 +27,4 @@ public class ErrorsStat implements Stat {
     public void computeEnd(Category bucket) {
     }
 
-    public Stat newInstance(){
-        return new ErrorsStat();
-    }
-
 }

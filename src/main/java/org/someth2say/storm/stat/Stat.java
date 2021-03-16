@@ -10,7 +10,5 @@ public interface Stat {
 
     public void computeEnd(Category bucket);
 
-    public Stat newInstance();
-
     public Map<Object, Object> getStatResults();
 }

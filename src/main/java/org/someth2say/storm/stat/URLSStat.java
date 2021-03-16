@@ -24,9 +24,4 @@ public class URLSStat implements Stat {
     public void computeEnd(Category bucket) {
     }
 
-    @Override
-    public Stat newInstance() {
-        return new DurationSumStat();
-    }
-
 }

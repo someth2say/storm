@@ -19,10 +19,6 @@ public class CountStat implements Stat {
     public void computeEnd(Category bucket) {
     }
 
-    public Stat newInstance() {
-        return new CountStat();
-    }
-
     @Override
     public Map<Object, Object> getStatResults() {
        return Map.of("count", this.count);

@@ -19,10 +19,6 @@ public class ThreadStat implements Stat {
     public void computeEnd(Category bucket) {
     }
 
-    public Stat newInstance() {
-        return new ThreadStat();
-    }
-
     @Override
     public Map<Object, Object> getStatResults() {
         if (threads.isEmpty())
