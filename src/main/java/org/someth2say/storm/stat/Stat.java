@@ -2,13 +2,26 @@ package org.someth2say.storm.stat;
 
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import org.someth2say.storm.ResponseData;
 import org.someth2say.storm.category.Category;
+import org.someth2say.storm.stat.StatBuilder.StatBuilderParams;
 
-public interface Stat {
-    public void computeStep(Category bucket, ResponseData responseData);
+public abstract class Stat {
 
-    public void computeEnd(Category bucket);
+    @JsonIgnore
+    public StatBuilderParams statBuilderParams;
 
-    public Map<Object, Object> getStatResults();
+    public abstract void computeStep(Category bucket, ResponseData responseData);
+
+    public abstract void computeEnd(Category bucket);
+
+    @JsonIgnore
+    public abstract Map<Object, Object> getStatResults();
+
+    @Override
+    public String toString() {
+        return statBuilderParams.statBuilder.toString();
+    }
 }

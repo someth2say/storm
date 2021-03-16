@@ -6,7 +6,7 @@ import java.util.Map;
 import org.someth2say.storm.ResponseData;
 import org.someth2say.storm.category.Category;
 
-public class RelativeDurationStat implements Stat {
+public class RelativeDurationStat extends Stat {
 
     public double relativeDuration = 1d;
     private Duration durationsum = Duration.ZERO;

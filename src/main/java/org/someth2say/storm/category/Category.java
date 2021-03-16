@@ -1,12 +1,13 @@
 package org.someth2say.storm.category;
 
-import java.util.Collection;
 import java.util.Deque;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -19,6 +20,7 @@ import org.someth2say.storm.category.CategorizerBuilder.CategorizerBuilderParams
 import org.someth2say.storm.configuration.StormConfiguration;
 import org.someth2say.storm.stat.Stat;
 import org.someth2say.storm.stat.StatBuilder;
+import org.someth2say.storm.stat.StatBuilder.StatBuilderParams;
 import org.someth2say.storm.utils.SerializationUtils;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
@@ -32,15 +34,18 @@ public class Category {
     @JsonIgnore
     public final Deque<ResponseData> responseDatas = new ConcurrentLinkedDeque<>();
 
-    @JsonIgnore
-    public final Collection<Stat> statObjects;
+    //@JsonIgnore
+    //public final Collection<Stat> statObjects;
     
-    public final Map<Object, Object> stats = new LinkedHashMap<>();
+    public final Map<StatBuilderParams, Stat> stats;
     public final Map<Object, Category> categories = new LinkedHashMap<>();
 
     public Category(final StormConfiguration configuration, final Category parent) {
         this.parent = parent;
-        this.statObjects = StatBuilder.buildAll(configuration.statBuilderParams);
+        this.stats = configuration.statBuilderParams.stream().collect(
+            Collectors.toUnmodifiableMap(Function.identity(), StatBuilder::build)
+        );
+        //this.statObjects = StatBuilder.buildAll(configuration.statBuilderParams);
     }
 
     public void addResponse(final ResponseData responseData) {
@@ -55,7 +60,7 @@ public class Category {
     }
 
     private void updateStats(final ResponseData response) {
-        statObjects.forEach(stat -> {
+        stats.values().forEach(stat -> {
             LOG.debugf("Computing stat %s for response %010d", stat.getClass().getSimpleName(), response.requestNum);
             stat.computeStep(this, response);
         });
@@ -115,12 +120,7 @@ public class Category {
     }
 
     public void finalizeStats() {
-        statObjects.forEach(stat -> {
-            stat.computeEnd(this);
-            Map<Object, Object> statResults = stat.getStatResults();
-            this.stats.putAll(statResults);
-           }
-        );
+        stats.values().forEach(stat -> stat.computeEnd(this));
     }
 
     private String buildCategoryKey(final Categorizer categorizer, final String key) {

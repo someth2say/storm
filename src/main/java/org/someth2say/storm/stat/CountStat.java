@@ -6,7 +6,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.someth2say.storm.ResponseData;
 import org.someth2say.storm.category.Category;
 
-public class CountStat implements Stat {
+public class CountStat extends Stat {
 
     public AtomicInteger count = new AtomicInteger();
 

@@ -6,7 +6,7 @@ import java.util.Map;
 import org.someth2say.storm.ResponseData;
 import org.someth2say.storm.category.Category;
 
-public class TimeStat implements Stat {
+public class TimeStat extends Stat {
 
     public Instant startTime = Instant.MAX;
     public Instant endTime = Instant.MIN;

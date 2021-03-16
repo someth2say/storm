@@ -7,7 +7,7 @@ import java.util.Map;
 import org.someth2say.storm.ResponseData;
 import org.someth2say.storm.category.Category;
 
-public class URLSStat implements Stat {
+public class URLSStat extends Stat {
 
     public Collection<String> urls = new HashSet<>();
     @Override

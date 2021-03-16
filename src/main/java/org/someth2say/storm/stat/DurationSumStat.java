@@ -6,7 +6,7 @@ import java.util.Map;
 import org.someth2say.storm.ResponseData;
 import org.someth2say.storm.category.Category;
 
-public class DurationSumStat implements Stat {
+public class DurationSumStat extends Stat {
 
     public Duration durationsum = Duration.ZERO;
 

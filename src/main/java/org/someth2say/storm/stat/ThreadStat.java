@@ -6,7 +6,7 @@ import org.someth2say.storm.utils.Pair;
 
 import java.util.*;
 
-public class ThreadStat implements Stat {
+public class ThreadStat extends Stat {
 
     SortedSet<Long> threads = Collections.synchronizedSortedSet(new TreeSet<>());
 

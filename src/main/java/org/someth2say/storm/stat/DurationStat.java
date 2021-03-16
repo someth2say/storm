@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 import org.someth2say.storm.ResponseData;
 import org.someth2say.storm.category.Category;
 
-public class DurationStat implements Stat {
+public class DurationStat extends Stat {
 
     public Duration minDuration = Duration.ZERO;
     public Duration maxDuration = Duration.ZERO;

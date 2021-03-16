@@ -13,10 +13,7 @@ import javax.validation.constraints.Positive;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import org.someth2say.storm.category.Categorizer;
-import org.someth2say.storm.category.CategorizerBuilder;
 import org.someth2say.storm.category.CategorizerBuilder.CategorizerBuilderParams;
-import org.someth2say.storm.stat.StatBuilder;
 import org.someth2say.storm.stat.StatBuilder.StatBuilderParams;
 import org.someth2say.storm.utils.SerializationUtils;
 
@@ -45,7 +42,7 @@ public class StormConfiguration {
     public Order order = Order.ROUNDROBIN;
 
     @Parameters(arity = "0..*", description = "Target URIs for the requests")
-    public List<URI> urls = Collections.emptyList();;
+    public List<URI> urls = Collections.emptyList();
 
     @Option(names = {"--proxy"}, description = "Proxy for setting all connections.")
     public InetSocketAddress proxy = null;
@@ -64,10 +61,10 @@ public class StormConfiguration {
     public Version httpVersion = null;
 
     @Option(names = {"--cat", "--categorizers"}, description = "Categorizers to use to split response data.")
-    public List<CategorizerBuilderParams> categorizerBuilderParams = null;
+    public List<CategorizerBuilderParams> categorizerBuilderParams = Collections.emptyList();
 
     @Option(names = {"-s", "--stats"}, description = "Stats generated for each category bucket.")
-    public List<StatBuilderParams> statBuilderParams = null;
+    public List<StatBuilderParams> statBuilderParams = Collections.emptyList();
 
     @Positive
     @Option(names = {"--delay"}, description = "Delay time after a response")

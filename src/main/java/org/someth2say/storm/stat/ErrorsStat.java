@@ -7,7 +7,7 @@ import java.util.Set;
 import org.someth2say.storm.ResponseData;
 import org.someth2say.storm.category.Category;
 
-public class ErrorsStat implements Stat {
+public class ErrorsStat extends Stat {
 
     public Set<String> exceptions = new HashSet<>();
 

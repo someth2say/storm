@@ -7,7 +7,7 @@ import java.util.Set;
 import org.someth2say.storm.ResponseData;
 import org.someth2say.storm.category.Category;
 
-public class HeadersStat implements Stat {
+public class HeadersStat extends Stat {
 
     public Set<String> headers = new HashSet<>();
     

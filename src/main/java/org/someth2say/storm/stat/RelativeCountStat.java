@@ -5,7 +5,7 @@ import java.util.Map;
 import org.someth2say.storm.ResponseData;
 import org.someth2say.storm.category.Category;
 
-public class RelativeCountStat implements Stat {
+public class RelativeCountStat extends Stat {
 
     public double relativeCount = 1d;
 

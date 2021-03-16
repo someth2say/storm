@@ -6,7 +6,7 @@ import org.someth2say.storm.utils.Pair;
 
 import java.util.*;
 
-public class IdStat implements Stat {
+public class IdStat extends Stat {
 
     List<Integer> ids = Collections.synchronizedList(new ArrayList<>());
 

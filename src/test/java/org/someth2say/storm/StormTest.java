@@ -81,6 +81,20 @@ public class StormTest {
 
   }
 
+  @Test
+  public void severalStatsWithSeveralValues() throws Exception {
 
+    URI wiremockURI = new URIBuilder(wireMockServer.baseUrl()).build();
+    URI statusURI = new URIBuilder(wiremockURI).setPath("/status").build();
+    stubFor(get(statusURI.getPath()).willReturn(ok()));
+
+    StormConfiguration configuration = new StormConfiguration();
+    configuration.urls = List.of(statusURI);
+    configuration.statBuilderParams = List.of(new StatBuilder.StatBuilderParams(StatBuilder.TIME), new StatBuilder.StatBuilderParams(StatBuilder.DURATION));
+    Category category = Storm.main(configuration);
+    assertNotNull(category);
+    System.out.println(category);
+
+  }
 
 }
