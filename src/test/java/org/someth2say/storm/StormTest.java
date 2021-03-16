@@ -16,7 +16,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.someth2say.storm.category.CategorizerBuilder;
 import org.someth2say.storm.category.Category;
-import org.someth2say.storm.configuration.Configuration;
+import org.someth2say.storm.configuration.StormConfiguration;
+import org.someth2say.storm.stat.StatBuilder;
 
 public class StormTest {
 
@@ -36,7 +37,7 @@ public class StormTest {
   }
 
   @Test
-  public void defaultConfigAllGood() throws Exception {
+  public void singleCategorizer() throws Exception {
 
     /*
      * stubFor(get(urlEqualTo("/v2/name/GR"))
@@ -55,13 +56,31 @@ public class StormTest {
     URI statusURI = new URIBuilder(wiremockURI).setPath("/status").build();
     stubFor(get(statusURI.getPath()).willReturn(ok()));
 
-    Configuration configuration = new Configuration();
+    StormConfiguration configuration = new StormConfiguration();
     configuration.urls = List.of(statusURI);
-    configuration.categorizerBuilderParams=List.of(CategorizerBuilder.HTTPCODE.name());
+    configuration.categorizerBuilderParams=List.of(new CategorizerBuilder.CategorizerBuilderParams(CategorizerBuilder.HTTPCODE,""));
 
     Category category = Storm.main(configuration);
     assertNotNull(category);
 
   }
+
+  @Test
+  public void singleStat() throws Exception {
+
+    URI wiremockURI = new URIBuilder(wireMockServer.baseUrl()).build();
+    URI statusURI = new URIBuilder(wiremockURI).setPath("/status").build();
+    stubFor(get(statusURI.getPath()).willReturn(ok()));
+
+    StormConfiguration configuration = new StormConfiguration();
+    configuration.urls = List.of(statusURI);
+    configuration.statBuilderParams = List.of(new StatBuilder.StatBuilderParams(StatBuilder.COUNT));
+    Category category = Storm.main(configuration);
+    assertNotNull(category);
+    System.out.println(category);
+
+  }
+
+
 
 }

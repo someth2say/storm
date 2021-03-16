@@ -13,17 +13,17 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.jboss.logging.Logger;
 import org.someth2say.storm.category.Category;
-import org.someth2say.storm.configuration.Configuration;
+import org.someth2say.storm.configuration.StormConfiguration;
 
 public final class StormCallable implements Callable<ResponseData> {
 	private static final Logger LOG = Logger.getLogger(StormCallable.class);
     private final static AtomicInteger requestCounter = new AtomicInteger();
 
-	private final Configuration configuration;
+	private final StormConfiguration configuration;
 	private final Category category;
 	private final HttpClient httpClient;
 
-	public StormCallable(final Category rootBucket, final Configuration configuration, final HttpClient httpClient) {
+	public StormCallable(final Category rootBucket, final StormConfiguration configuration, final HttpClient httpClient) {
 		this.category = rootBucket;
 		this.configuration = configuration;
 		this.httpClient = httpClient;

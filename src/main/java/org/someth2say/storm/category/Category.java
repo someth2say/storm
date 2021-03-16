@@ -15,7 +15,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import org.jboss.logging.Logger;
 import org.someth2say.storm.ResponseData;
 import org.someth2say.storm.StormCallable;
-import org.someth2say.storm.configuration.Configuration;
+import org.someth2say.storm.category.CategorizerBuilder.CategorizerBuilderParams;
+import org.someth2say.storm.configuration.StormConfiguration;
 import org.someth2say.storm.stat.Stat;
 import org.someth2say.storm.stat.StatBuilder;
 import org.someth2say.storm.utils.SerializationUtils;
@@ -37,7 +38,7 @@ public class Category {
     public final Map<Object, Object> stats = new LinkedHashMap<>();
     public final Map<Object, Category> categories = new LinkedHashMap<>();
 
-    public Category(final Configuration configuration, final Category parent) {
+    public Category(final StormConfiguration configuration, final Category parent) {
         this.parent = parent;
         this.statObjects = StatBuilder.buildAll(configuration.statBuilderParams);
     }
@@ -69,15 +70,15 @@ public class Category {
         }
     }
 
-    public void categorize(final Configuration configuration) {
+    public void categorize(final StormConfiguration configuration) {
         categorize(0, configuration);
     }
 
-    private void categorize(final int catIdx, final Configuration configuration) {
-        List<String> categorizers = configuration.categorizerBuilderParams;
+    private void categorize(final int catIdx, final StormConfiguration configuration) {
+        List<CategorizerBuilderParams> categorizers = configuration.categorizerBuilderParams;
         // 1.- Get categories
         if (categorizers!=null && catIdx < categorizers.size()) {
-            final Categorizer categorizer = CategorizerBuilder.buildCategorizer(categorizers.get(catIdx));
+            final Categorizer categorizer = CategorizerBuilder.build(categorizers.get(catIdx));
 
             // 2.- Create buckets per category
             //This is important, as some categorizers use it as initialization
@@ -94,7 +95,7 @@ public class Category {
         }
     }
 
-    private void addResponsesToChildCategories(final Categorizer categorizer, final Configuration configuration) {
+    private void addResponsesToChildCategories(final Categorizer categorizer, final StormConfiguration configuration) {
 
         responseDatas.forEach((responseData) -> {
             final Optional<String> optKey = categorizer.getCategoryKeyFor(responseData);
@@ -116,7 +117,8 @@ public class Category {
     public void finalizeStats() {
         statObjects.forEach(stat -> {
             stat.computeEnd(this);
-            this.stats.putAll(stat.getStatResults());
+            Map<Object, Object> statResults = stat.getStatResults();
+            this.stats.putAll(statResults);
            }
         );
     }

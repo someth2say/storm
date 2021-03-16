@@ -13,8 +13,11 @@ import javax.validation.constraints.Positive;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
+import org.someth2say.storm.category.Categorizer;
 import org.someth2say.storm.category.CategorizerBuilder;
+import org.someth2say.storm.category.CategorizerBuilder.CategorizerBuilderParams;
 import org.someth2say.storm.stat.StatBuilder;
+import org.someth2say.storm.stat.StatBuilder.StatBuilderParams;
 import org.someth2say.storm.utils.SerializationUtils;
 
 import io.quarkus.arc.config.ConfigProperties;
@@ -24,7 +27,7 @@ import picocli.CommandLine.Parameters;
 
 @ConfigProperties(prefix = "storm")
 @CommandLine.Command(mixinStandardHelpOptions = true, version = "TO BE IMPORTED FROM POM")
-public class Configuration {
+public class StormConfiguration {
 
     @Positive
     @Option(names = {"-t", "--threads"}, description = "How many worker threads use")
@@ -61,16 +64,10 @@ public class Configuration {
     public Version httpVersion = null;
 
     @Option(names = {"--cat", "--categorizers"}, description = "Categorizers to use to split response data.")
-    public List<String> categorizerBuilderParams = null;
-
-    @JsonIgnore
-    public List<CategorizerBuilder> categorizerBuilders;
+    public List<CategorizerBuilderParams> categorizerBuilderParams = null;
 
     @Option(names = {"-s", "--stats"}, description = "Stats generated for each category bucket.")
-    public List<String> statBuilderParams = null;
-
-    @JsonIgnore
-    public List<StatBuilder> statBuilders;
+    public List<StatBuilderParams> statBuilderParams = null;
 
     @Positive
     @Option(names = {"--delay"}, description = "Delay time after a response")

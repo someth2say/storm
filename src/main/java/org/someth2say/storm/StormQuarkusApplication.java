@@ -4,7 +4,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.someth2say.storm.category.Category;
-import org.someth2say.storm.configuration.Configuration;
+import org.someth2say.storm.configuration.StormConfiguration;
 
 import io.quarkus.runtime.QuarkusApplication;
 @Singleton
@@ -13,7 +13,7 @@ public class StormQuarkusApplication implements QuarkusApplication {
     public static final String RESET = "\033[0m"; // Text Reset
 
     @Inject
-    Configuration configuration;
+    StormConfiguration configuration;
 
     @Override
     public int run(final String... args) throws Exception {

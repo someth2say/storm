@@ -12,7 +12,7 @@ import javax.inject.Inject;
 import org.apache.http.client.utils.URIBuilder;
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.someth2say.storm.category.Category;
-import org.someth2say.storm.configuration.Configuration;
+import org.someth2say.storm.configuration.StormConfiguration;
 
 import io.quarkus.test.common.QuarkusTestResource;
 
@@ -20,7 +20,7 @@ import io.quarkus.test.common.QuarkusTestResource;
 @QuarkusTestResource(WiremockTestResourceLifeCycleManager.class)
 public class StormQuarkusTest {
   @Inject
-  Configuration configuration;
+  StormConfiguration configuration;
 
   @Inject
   StormQuarkusApplication storm;

@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.someth2say.storm.category.CategorizerBuilder;
-import org.someth2say.storm.configuration.Configuration;
+import org.someth2say.storm.configuration.StormConfiguration;
 import org.someth2say.storm.configuration.FileConfigurationSource;
 import org.someth2say.storm.configuration.PicocliConfigSource;
 import org.someth2say.storm.stat.StatBuilder;
@@ -19,7 +19,7 @@ import picocli.CommandLine.Model.OptionSpec;
 public class StormMain {
     public static void main(String[] args) {
         try {
-            PicocliConfigSource.init(args, Configuration.class);
+            PicocliConfigSource.init(args, StormConfiguration.class);
             loadExtraConfig();
             argsSanityCheck();
             Quarkus.run(StormQuarkusApplication.class, StormMain::exitHandler, args);
@@ -32,7 +32,7 @@ public class StormMain {
         OptionSpec matchedOption = PicocliConfigSource.parseResult.matchedOption("--configFile");
         if (matchedOption != null){
             File configFile = matchedOption.getValue();
-            FileConfigurationSource.init(configFile, Configuration.class);
+            FileConfigurationSource.init(configFile, StormConfiguration.class);
         }
     }
 

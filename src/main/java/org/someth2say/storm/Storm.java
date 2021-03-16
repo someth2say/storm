@@ -20,7 +20,7 @@ import org.jboss.logging.Logger;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 import org.someth2say.storm.category.Category;
-import org.someth2say.storm.configuration.Configuration;
+import org.someth2say.storm.configuration.StormConfiguration;
 import org.someth2say.storm.configuration.Order;
 import org.someth2say.storm.utils.SerializationUtils;
 
@@ -30,7 +30,7 @@ public class Storm {
 
     private static final Logger LOG = Logger.getLogger(Storm.class);
 
-    public static Category main(Configuration configuration) throws Exception {
+    public static Category main(StormConfiguration configuration) throws Exception {
         sanityChecks(configuration);
 
         if (configuration.dumpConfig) {
@@ -57,7 +57,7 @@ public class Storm {
         return rootBucket;
     }
 
-    private static void sanityChecks(Configuration configuration) {
+    private static void sanityChecks(StormConfiguration configuration) {
         // Sane defaults
         //configuration.order = configuration.order != null ? configuration.order : Order.ROUNDROBIN;
         //configuration.urls = configuration.urls != null ? configuration.urls : Collections.emptyList();
@@ -65,7 +65,7 @@ public class Storm {
 
         if (nullOrEmpty(configuration.urls)) {
             println(RED, "Please provide at least ", RED_BOLD, "one URL.");
-        } else if (nullOrEmpty(configuration.categorizerBuilderParams) && nullOrEmpty(configuration.statBuilders)) {
+        } else if (nullOrEmpty(configuration.categorizerBuilderParams) && nullOrEmpty(configuration.statBuilderParams)) {
             println(RED, "Please provide at least ", RED_BOLD, "one stat", RED, " or ", RED_BOLD, "one categorizer",
                     RED, ".");
         }
@@ -76,7 +76,7 @@ public class Storm {
         return collectio == null || collectio.isEmpty();
     }
 
-    private static HttpClient buildHttpClient(Configuration configuration) {
+    private static HttpClient buildHttpClient(StormConfiguration configuration) {
         LOG.debug("Constructing HTTP client");
         final Builder httpClientBuilder = HttpClient.newBuilder();
 
@@ -92,7 +92,7 @@ public class Storm {
         return httpClientBuilder.build();
     }
 
-    private static void executeRequests(final Category rootCategory, final Configuration configuration)
+    private static void executeRequests(final Category rootCategory, final StormConfiguration configuration)
             throws InterruptedException {
         final HttpClient httpClient = buildHttpClient(configuration);
         final int nThreads = configuration.threads != null ? configuration.threads
@@ -134,7 +134,7 @@ public class Storm {
         LOG.warnf("Stopping at %d. Max queue size: %d", System.currentTimeMillis(), maxQueueSize);
     }
 
-    private void executeReactiveRequests(final Category rootCategory, final Configuration configuration) {
+    private void executeReactiveRequests(final Category rootCategory, final StormConfiguration configuration) {
         final HttpClient httpClient = buildHttpClient(configuration);
         final int nThreads = configuration.threads != null ? configuration.threads
                 : Runtime.getRuntime().availableProcessors();

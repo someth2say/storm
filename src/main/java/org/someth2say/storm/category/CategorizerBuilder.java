@@ -1,6 +1,7 @@
 package org.someth2say.storm.category;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
@@ -16,9 +17,31 @@ public enum CategorizerBuilder {
     DURATIONHISTOGRAM(DurationHistogramCategorizer::new),
     TIMEHISTOGRAM(TimeHistogramCategorizer::new);
 
+    public static class CategorizerBuilderParams { 
+        private static final Pattern pattern = Pattern.compile("([^(]+)(\\((.+)\\))?");
+
+        public CategorizerBuilder categorizerBuilder;
+        public String params;
+
+        public CategorizerBuilderParams(final CategorizerBuilder categorizerBuilder, final String params){ 
+            Objects.requireNonNull(categorizerBuilder);
+            this.categorizerBuilder=categorizerBuilder;
+            this.params=params;
+        }
+
+        public CategorizerBuilderParams(final String buildParams){
+            Matcher matcher = pattern.matcher(buildParams);
+            if (!matcher.matches()){
+                throw new IllegalArgumentException("Can not parse categorizer: "+buildParams);
+            }
+
+            this.params = matcher.groupCount()>2?matcher.group(3):null;
+            this.categorizerBuilder = CategorizerBuilder.valueOf(matcher.group(1).toUpperCase());
+        }
+    }
+
     private Supplier<Categorizer> supplier;
     private Function<String, Categorizer> function;
-    private static final Pattern pattern = Pattern.compile("([^(]+)(\\((.+)\\))?");
 
     private CategorizerBuilder(Supplier<Categorizer> supplier) {
         this.supplier = supplier;
@@ -28,18 +51,17 @@ public enum CategorizerBuilder {
         this.function = function;
     }
 
-    public Categorizer build(String args) {
-        return function != null ? function.apply(args) : supplier.get();
+    public static Categorizer build(final CategorizerBuilderParams cbp) {
+        return cbp.categorizerBuilder.function != null ? cbp.categorizerBuilder.function.apply(cbp.params) : cbp.categorizerBuilder.supplier.get();
     }
 
-    public static List<Categorizer> buildAll(final List<String> buildParams){
+    public static List<Categorizer> buildAll(final List<CategorizerBuilderParams> buildParams){
         return buildParams.stream()
-            .map(CategorizerBuilder::buildCategorizer)
+            .map(CategorizerBuilder::build)
             .collect(Collectors.toList());
     }
 
-
-    public static Categorizer buildCategorizer(final String buildParams){
+/*     public static Categorizer buildCategorizer(final String buildParams){
         //1.- Separate categorizer name from config.
         Matcher matcher = pattern.matcher(buildParams);
         if (!matcher.matches()){
@@ -53,5 +75,5 @@ public enum CategorizerBuilder {
         //2.- Create categorizer
 		CategorizerBuilder builder = CategorizerBuilder.valueOf(categorizerName.toUpperCase());
         return builder.build(categorizerParams);
-    }
+    } */
 }
