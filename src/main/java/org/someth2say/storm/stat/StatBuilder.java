@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-public enum Stats {
+public enum StatBuilder {
     COUNT(CountStat::new),
     DURATION(DurationStat::new),
     DURATIONSUM(DurationSumStat::new),
@@ -21,20 +21,20 @@ public enum Stats {
 
     private Supplier<Stat> supplier;
 
-    public Stat getInstance() {
-        return supplier.get();
-    }
-
-    private Stats(Supplier<Stat> supplier) {
+    private StatBuilder(final Supplier<Stat> supplier) {
         this.supplier = supplier;
     }
 
-    public static List<Stat> buildStats(List<String> stats) {
-        if (stats==null)
+    public Stat build() {
+        return supplier.get();
+    }
+
+    public static List<Stat> buildAll(final List<String> buildParams) {
+        if (buildParams==null)
             return Collections.emptyList();
-        return stats.stream()
-            .map(str -> Stats.valueOf(str.toUpperCase()))
-            .map(st -> st.getInstance())
+        return buildParams.stream()
+            .map(str -> StatBuilder.valueOf(str.toUpperCase()))
+            .map(st -> st.build())
             .collect(Collectors.toList());
     }
 

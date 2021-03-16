@@ -11,14 +11,12 @@ import javax.inject.Inject;
 
 import org.apache.http.client.utils.URIBuilder;
 import org.eclipse.microprofile.config.ConfigProvider;
-import org.junit.jupiter.api.Test;
 import org.someth2say.storm.category.Category;
 import org.someth2say.storm.configuration.Configuration;
 
 import io.quarkus.test.common.QuarkusTestResource;
-import io.quarkus.test.junit.QuarkusTest;
 
-@QuarkusTest
+//@QuarkusTest
 @QuarkusTestResource(WiremockTestResourceLifeCycleManager.class)
 public class StormQuarkusTest {
   @Inject
@@ -27,8 +25,8 @@ public class StormQuarkusTest {
   @Inject
   StormQuarkusApplication storm;
 
-  @Test
-  public void allGoodStormWithDefaults() throws Exception {
+  //@Test
+  public void quarkusDefaultConfigAllGood() throws Exception {
 
     /*
      * stubFor(get(urlEqualTo("/v2/name/GR"))

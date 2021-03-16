@@ -5,6 +5,7 @@ import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.http.HttpClient.Redirect;
 import java.net.http.HttpClient.Version;
+import java.util.Collections;
 import java.util.List;
 
 import javax.validation.constraints.Positive;
@@ -12,6 +13,8 @@ import javax.validation.constraints.Positive;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
+import org.someth2say.storm.category.CategorizerBuilder;
+import org.someth2say.storm.stat.StatBuilder;
 import org.someth2say.storm.utils.SerializationUtils;
 
 import io.quarkus.arc.config.ConfigProperties;
@@ -29,17 +32,17 @@ public class Configuration {
 
     @Positive
     @Option(names = {"-c", "--count"}, description = "How many times execute the requests")
-    public Integer count = null;
+    public Integer count = 10;
 
     @Positive
     @Option(names = {"-d", "--duration"}, description = "Milliseconds since the first request until the last accepted response.")
     public Integer duration = null;
 
     @Option(names = {"-o", "--order"}, description = "Strategy for picking the next URL from the list.")
-    public Order order = null;
+    public Order order = Order.ROUNDROBIN;
 
     @Parameters(arity = "0..*", description = "Target URIs for the requests")
-    public List<URI> urls = null;
+    public List<URI> urls = Collections.emptyList();;
 
     @Option(names = {"--proxy"}, description = "Proxy for setting all connections.")
     public InetSocketAddress proxy = null;
@@ -58,10 +61,16 @@ public class Configuration {
     public Version httpVersion = null;
 
     @Option(names = {"--cat", "--categorizers"}, description = "Categorizers to use to split response data.")
-    public List<String> categorizers = null;
+    public List<String> categorizerBuilderParams = null;
+
+    @JsonIgnore
+    public List<CategorizerBuilder> categorizerBuilders;
 
     @Option(names = {"-s", "--stats"}, description = "Stats generated for each category bucket.")
-    public List<String> stats = null;
+    public List<String> statBuilderParams = null;
+
+    @JsonIgnore
+    public List<StatBuilder> statBuilders;
 
     @Positive
     @Option(names = {"--delay"}, description = "Delay time after a response")

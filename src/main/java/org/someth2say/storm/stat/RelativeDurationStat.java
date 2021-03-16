@@ -23,7 +23,7 @@ public class RelativeDurationStat implements Stat {
     @Override
     public void computeEnd(Category bucket) {
         if (bucket.parent!=null){
-            Duration parentDuration=bucket.parent.statObjs.stream()
+            Duration parentDuration=bucket.parent.statObjects.stream()
                 .filter(stat->stat.getClass().isAssignableFrom(RelativeDurationStat.class)).map(s->((RelativeDurationStat)s))
                 .map(rds->rds.durationsum).findFirst().orElse(Duration.ZERO);
             relativeDuration= this.durationsum.toMillis()*1.0/parentDuration.toMillis();

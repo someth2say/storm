@@ -7,7 +7,6 @@ import org.someth2say.storm.category.Category;
 import org.someth2say.storm.configuration.Configuration;
 
 import io.quarkus.runtime.QuarkusApplication;
-
 @Singleton
 public class StormQuarkusApplication implements QuarkusApplication {
 

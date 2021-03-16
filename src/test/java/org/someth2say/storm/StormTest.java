@@ -14,7 +14,7 @@ import org.apache.http.client.utils.URIBuilder;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.someth2say.storm.category.Categorizers;
+import org.someth2say.storm.category.CategorizerBuilder;
 import org.someth2say.storm.category.Category;
 import org.someth2say.storm.configuration.Configuration;
 
@@ -36,7 +36,7 @@ public class StormTest {
   }
 
   @Test
-  public void allGoodStormWithDefaults() throws Exception {
+  public void defaultConfigAllGood() throws Exception {
 
     /*
      * stubFor(get(urlEqualTo("/v2/name/GR"))
@@ -57,10 +57,11 @@ public class StormTest {
 
     Configuration configuration = new Configuration();
     configuration.urls = List.of(statusURI);
-    configuration.categorizers=List.of(Categorizers.HTTPCODE.name());
-    System.out.println(configuration);
+    configuration.categorizerBuilderParams=List.of(CategorizerBuilder.HTTPCODE.name());
+
     Category category = Storm.main(configuration);
     assertNotNull(category);
-    System.out.println(category);
+
   }
+
 }

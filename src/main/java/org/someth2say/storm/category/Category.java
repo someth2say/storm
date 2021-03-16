@@ -17,7 +17,7 @@ import org.someth2say.storm.ResponseData;
 import org.someth2say.storm.StormCallable;
 import org.someth2say.storm.configuration.Configuration;
 import org.someth2say.storm.stat.Stat;
-import org.someth2say.storm.stat.Stats;
+import org.someth2say.storm.stat.StatBuilder;
 import org.someth2say.storm.utils.SerializationUtils;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
@@ -32,14 +32,14 @@ public class Category {
     public final Deque<ResponseData> responseDatas = new ConcurrentLinkedDeque<>();
 
     @JsonIgnore
-    public final Collection<Stat> statObjs;
+    public final Collection<Stat> statObjects;
     
     public final Map<Object, Object> stats = new LinkedHashMap<>();
     public final Map<Object, Category> categories = new LinkedHashMap<>();
 
     public Category(final Configuration configuration, final Category parent) {
         this.parent = parent;
-        this.statObjs = Stats.buildStats(configuration.stats);
+        this.statObjects = StatBuilder.buildAll(configuration.statBuilderParams);
     }
 
     public void addResponse(final ResponseData responseData) {
@@ -54,7 +54,7 @@ public class Category {
     }
 
     private void updateStats(final ResponseData response) {
-        statObjs.forEach(stat -> {
+        statObjects.forEach(stat -> {
             LOG.debugf("Computing stat %s for response %010d", stat.getClass().getSimpleName(), response.requestNum);
             stat.computeStep(this, response);
         });
@@ -74,10 +74,10 @@ public class Category {
     }
 
     private void categorize(final int catIdx, final Configuration configuration) {
-        List<String> categorizers = configuration.categorizers;
+        List<String> categorizers = configuration.categorizerBuilderParams;
         // 1.- Get categories
         if (categorizers!=null && catIdx < categorizers.size()) {
-            final Categorizer categorizer = Categorizers.buildCategorizer(categorizers.get(catIdx));
+            final Categorizer categorizer = CategorizerBuilder.buildCategorizer(categorizers.get(catIdx));
 
             // 2.- Create buckets per category
             //This is important, as some categorizers use it as initialization
@@ -114,7 +114,7 @@ public class Category {
     }
 
     public void finalizeStats() {
-        statObjs.forEach(stat -> {
+        statObjects.forEach(stat -> {
             stat.computeEnd(this);
             this.stats.putAll(stat.getStatResults());
            }

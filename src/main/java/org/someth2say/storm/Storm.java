@@ -59,13 +59,13 @@ public class Storm {
 
     private static void sanityChecks(Configuration configuration) {
         // Sane defaults
-        configuration.order = configuration.order != null ? configuration.order : Order.ROUNDROBIN;
-        configuration.urls = configuration.urls != null ? configuration.urls : Collections.emptyList();
-        configuration.count = configuration.count != null ? configuration.count : 10;
+        //configuration.order = configuration.order != null ? configuration.order : Order.ROUNDROBIN;
+        //configuration.urls = configuration.urls != null ? configuration.urls : Collections.emptyList();
+        //configuration.count = configuration.count != null ? configuration.count : 10;
 
         if (nullOrEmpty(configuration.urls)) {
             println(RED, "Please provide at least ", RED_BOLD, "one URL.");
-        } else if (nullOrEmpty(configuration.categorizers) && nullOrEmpty(configuration.stats)) {
+        } else if (nullOrEmpty(configuration.categorizerBuilderParams) && nullOrEmpty(configuration.statBuilders)) {
             println(RED, "Please provide at least ", RED_BOLD, "one stat", RED, " or ", RED_BOLD, "one categorizer",
                     RED, ".");
         }
