@@ -10,8 +10,6 @@ import io.quarkus.runtime.QuarkusApplication;
 @Singleton
 public class StormQuarkusApplication implements QuarkusApplication {
 
-    public static final String RESET = "\033[0m"; // Text Reset
-
     @Inject
     StormConfiguration configuration;
 
@@ -30,5 +28,4 @@ public class StormQuarkusApplication implements QuarkusApplication {
     public Category main() throws Exception {
         return Storm.main(configuration);
     }
-
 }

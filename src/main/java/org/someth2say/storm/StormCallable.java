@@ -17,7 +17,7 @@ import org.someth2say.storm.configuration.StormConfiguration;
 
 public final class StormCallable implements Callable<ResponseData> {
 	private static final Logger LOG = Logger.getLogger(StormCallable.class);
-    private final static AtomicInteger requestCounter = new AtomicInteger();
+    private static final AtomicInteger requestCounter = new AtomicInteger();
 
 	private final StormConfiguration configuration;
 	private final Category category;

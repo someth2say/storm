@@ -10,7 +10,6 @@ import java.net.http.HttpClient.Builder;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -21,7 +20,6 @@ import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 import org.someth2say.storm.category.Category;
 import org.someth2say.storm.configuration.StormConfiguration;
-import org.someth2say.storm.configuration.Order;
 import org.someth2say.storm.utils.SerializationUtils;
 
 import io.smallrye.mutiny.Multi;
@@ -65,7 +63,7 @@ public class Storm {
 
         if (nullOrEmpty(configuration.urls)) {
             println(RED, "Please provide at least ", RED_BOLD, "one URL.");
-        } else if (nullOrEmpty(configuration.categorizerBuilderParams) && nullOrEmpty(configuration.statBuilderParams)) {
+        } else if (nullOrEmpty(configuration.categorizers) && nullOrEmpty(configuration.stats)) {
             println(RED, "Please provide at least ", RED_BOLD, "one stat", RED, " or ", RED_BOLD, "one categorizer",
                     RED, ".");
         }

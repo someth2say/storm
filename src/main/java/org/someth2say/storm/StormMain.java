@@ -36,13 +36,16 @@ public class StormMain {
         }
     }
 
-    private static void argsSanityCheck(){
+    private static boolean argsSanityCheck(){
         final CommandLine commandLine = PicocliConfigSource.commandLine;
         if (commandLine.isUsageHelpRequested()) {
             printHelp(commandLine);
+            return false;
         } else if (commandLine.isVersionHelpRequested()) {
             commandLine.printVersionHelp(System.out);
+            return false;
         } 
+        return true;
     }
 
     private static void printHelp(final CommandLine commandLine) {

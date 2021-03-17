@@ -1,5 +1,6 @@
 package org.someth2say.storm.category;
 
+import java.util.ArrayList;
 import java.util.Deque;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -16,11 +17,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import org.jboss.logging.Logger;
 import org.someth2say.storm.ResponseData;
 import org.someth2say.storm.StormCallable;
-import org.someth2say.storm.category.CategorizerBuilder.CategorizerBuilderParams;
 import org.someth2say.storm.configuration.StormConfiguration;
 import org.someth2say.storm.stat.Stat;
 import org.someth2say.storm.stat.StatBuilder;
-import org.someth2say.storm.stat.StatBuilder.StatBuilderParams;
+import org.someth2say.storm.stat.StatBuilderParams;
 import org.someth2say.storm.utils.SerializationUtils;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
@@ -33,19 +33,15 @@ public class Category {
 
     @JsonIgnore
     public final Deque<ResponseData> responseDatas = new ConcurrentLinkedDeque<>();
-
-    //@JsonIgnore
-    //public final Collection<Stat> statObjects;
     
     public final Map<StatBuilderParams, Stat> stats;
     public final Map<Object, Category> categories = new LinkedHashMap<>();
 
     public Category(final StormConfiguration configuration, final Category parent) {
         this.parent = parent;
-        this.stats = configuration.statBuilderParams.stream().collect(
+        this.stats = configuration.stats.stream().collect(
             Collectors.toUnmodifiableMap(Function.identity(), StatBuilder::build)
         );
-        //this.statObjects = StatBuilder.buildAll(configuration.statBuilderParams);
     }
 
     public void addResponse(final ResponseData responseData) {
@@ -80,7 +76,7 @@ public class Category {
     }
 
     private void categorize(final int catIdx, final StormConfiguration configuration) {
-        List<CategorizerBuilderParams> categorizers = configuration.categorizerBuilderParams;
+        List<CategorizerBuilderParams> categorizers = new ArrayList<>(configuration.categorizers);
         // 1.- Get categories
         if (categorizers!=null && catIdx < categorizers.size()) {
             final Categorizer categorizer = CategorizerBuilder.build(categorizers.get(catIdx));

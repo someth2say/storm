@@ -5,6 +5,7 @@ import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.http.HttpClient.Redirect;
 import java.net.http.HttpClient.Version;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -13,8 +14,8 @@ import javax.validation.constraints.Positive;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import org.someth2say.storm.category.CategorizerBuilder.CategorizerBuilderParams;
-import org.someth2say.storm.stat.StatBuilder.StatBuilderParams;
+import org.someth2say.storm.category.CategorizerBuilderParams;
+import org.someth2say.storm.stat.StatBuilderParams;
 import org.someth2say.storm.utils.SerializationUtils;
 
 import io.quarkus.arc.config.ConfigProperties;
@@ -61,10 +62,10 @@ public class StormConfiguration {
     public Version httpVersion = null;
 
     @Option(names = {"--cat", "--categorizers"}, description = "Categorizers to use to split response data.")
-    public List<CategorizerBuilderParams> categorizerBuilderParams = Collections.emptyList();
+    public Collection<CategorizerBuilderParams> categorizers = Collections.emptyList();
 
     @Option(names = {"-s", "--stats"}, description = "Stats generated for each category bucket.")
-    public List<StatBuilderParams> statBuilderParams = Collections.emptyList();
+    public Collection<StatBuilderParams> stats = Collections.emptyList();
 
     @Positive
     @Option(names = {"--delay"}, description = "Delay time after a response")

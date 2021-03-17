@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import org.someth2say.storm.ResponseData;
 import org.someth2say.storm.category.Category;
-import org.someth2say.storm.stat.StatBuilder.StatBuilderParams;
 
 public abstract class Stat {
 
@@ -17,8 +16,8 @@ public abstract class Stat {
 
     public abstract void computeEnd(Category bucket);
 
-    @JsonIgnore
-    public abstract Map<Object, Object> getStatResults();
+//    @JsonIgnore
+//    public abstract Map<Object, Object> getStatResults();
 
     @Override
     public String toString() {

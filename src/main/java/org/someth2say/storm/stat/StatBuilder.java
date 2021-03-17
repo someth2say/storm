@@ -2,7 +2,6 @@ package org.someth2say.storm.stat;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -19,25 +18,6 @@ public enum StatBuilder {
     TIME(TimeStat::new), 
     URLS(URLSStat::new),
     ;
-
-    public static class StatBuilderParams {
-
-        public StatBuilder statBuilder;
-
-        public StatBuilderParams(final StatBuilder statBuilder) {
-            Objects.requireNonNull(statBuilder);
-            this.statBuilder = statBuilder;
-        }
-
-        public StatBuilderParams(final String buildParams) {
-            this.statBuilder = StatBuilder.valueOf(buildParams.toUpperCase());
-        }
-
-        @Override
-        public String toString() {
-            return statBuilder.toString();
-        }
-    }
 
     private Supplier<Stat> supplier;
 

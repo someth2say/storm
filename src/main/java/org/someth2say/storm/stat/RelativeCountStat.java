@@ -1,19 +1,15 @@
 package org.someth2say.storm.stat;
 
-import java.util.Map;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 import org.someth2say.storm.ResponseData;
 import org.someth2say.storm.category.Category;
 
 public class RelativeCountStat extends Stat {
 
+    @JsonValue
     public double relativeCount = 1d;
 
-    @Override
-    public Map<Object, Object> getStatResults() {
-       return Map.of("relativeCounte", this.relativeCount);
-    }
-    
     @Override
     public void computeStep(Category bucket, ResponseData responseData) {
     }

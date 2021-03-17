@@ -1,7 +1,8 @@
 package org.someth2say.storm.stat;
 
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import com.fasterxml.jackson.annotation.JsonValue;
 
 import org.someth2say.storm.ResponseData;
 import org.someth2say.storm.category.Category;
@@ -20,8 +21,8 @@ public class CountStat extends Stat {
     }
 
     @Override
-    public Map<Object, Object> getStatResults() {
-       return Map.of("count", this.count);
+    @JsonValue
+    public String toString() {
+        return count.toString();
     }
-
 }
