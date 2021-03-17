@@ -9,7 +9,6 @@ import java.net.http.HttpResponse.BodyHandlers;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.concurrent.Callable;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.jboss.logging.Logger;
 import org.someth2say.storm.category.Category;
@@ -17,28 +16,26 @@ import org.someth2say.storm.configuration.StormConfiguration;
 
 public final class StormCallable implements Callable<ResponseData> {
 	private static final Logger LOG = Logger.getLogger(StormCallable.class);
-    private static final AtomicInteger requestCounter = new AtomicInteger();
 
 	private final StormConfiguration configuration;
 	private final Category category;
 	private final HttpClient httpClient;
+	private final RequestBuilder requestBuilder;
 
-	public StormCallable(final Category rootBucket, final StormConfiguration configuration, final HttpClient httpClient) {
+	public StormCallable(final Category rootBucket, final StormConfiguration configuration, final HttpClient httpClient, final RequestBuilder requestBuilder) {
 		this.category = rootBucket;
 		this.configuration = configuration;
 		this.httpClient = httpClient;
+        this.requestBuilder = requestBuilder;
 	}
 
 	@Override
 	public ResponseData call() {
 		try {
 
-			int count = requestCounter.getAndIncrement();
-			final URI nextURL = configuration.order.getNextURL(configuration.urls, configuration.count, count);
+			RequestData requestData = requestBuilder.getNextRequest();
 
-			final HttpRequest request = createRequest(nextURL);
-
-			final ResponseData responseData = executeRequest(httpClient, request, count);
+			final ResponseData responseData = executeRequest(httpClient, requestData.httpRequest, requestData.count);
 
 			category.addResponse(responseData);
 
@@ -87,6 +84,7 @@ public final class StormCallable implements Callable<ResponseData> {
 
 		if (configuration.requestTimeout != null)
 			requestBuilder.timeout(Duration.ofMillis(configuration.requestTimeout));
+			
 		return requestBuilder.uri(uri)
 				// .headers(headers)
 				.GET().build();

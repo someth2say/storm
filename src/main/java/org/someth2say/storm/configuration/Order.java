@@ -6,17 +6,17 @@ import java.util.Random;
 
 public enum Order implements URLProvider {
     RANDOM {
-        public URI getNextURL(final List<URI> urls, double repeat, int count) {
+        public URI getNextURI(final List<URI> urls, double repeat, int count) {
             return urls.get(new Random().nextInt(urls.size()));
         }
     },
     SEQUENTIAL {
-        public URI getNextURL(final List<URI> urls, double repeat, int count) {
+        public URI getNextURI(final List<URI> urls, double repeat, int count) {
             return urls.get((int) (count / (repeat / urls.size())) % urls.size());
         }
     },
     ROUNDROBIN {
-        public URI getNextURL(final List<URI> urls, double repeat, int count) {
+        public URI getNextURI(final List<URI> urls, double repeat, int count) {
             return urls.get(count % urls.size());
         }
     };

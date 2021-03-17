@@ -5,5 +5,5 @@ import java.util.List;
 
 @FunctionalInterface
 public interface URLProvider {
-	 URI getNextURL(final List<URI> urls, double repeat, int count) ;
+	 URI getNextURI(final List<URI> urls, double repeat, int count) ;
 }

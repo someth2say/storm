@@ -108,6 +108,8 @@ public class Storm {
             time = configuration.duration != null ? configuration.duration : Integer.MAX_VALUE;
         }
 
+        RequestBuilder requestBuilder = new RequestBuilder(configuration);
+
         final long end = System.currentTimeMillis() + time;
         LOG.warnf("Starting at %d, planned end at %s", System.currentTimeMillis(), end);
         int maxQueueSize = 0;
@@ -118,7 +120,7 @@ public class Storm {
                 LOG.warnf("Queue size too big! %d", queueSize);
                 Thread.sleep(100);
             }
-            pool.submit(new StormCallable(rootCategory, configuration, httpClient));
+            pool.submit(new StormCallable(rootCategory, configuration, httpClient, requestBuilder));
         }
         pool.shutdown();
 
