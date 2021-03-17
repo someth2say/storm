@@ -1,8 +1,6 @@
 package org.someth2say.storm;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.ok;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.net.URI;
@@ -120,6 +118,25 @@ public class StormTest {
 
   }
 
+
+
+  @Test
+  public void twoURLs() throws Exception {
+
+    URI wiremockURI = new URIBuilder(wireMockServer.baseUrl()).build();
+    URI statusURI = new URIBuilder(wiremockURI).setPath("/status").build();
+    URI errorURI = new URIBuilder(wiremockURI).setPath("/error").build();
+    stubFor(get(statusURI.getPath()).willReturn(ok()));
+    stubFor(get(errorURI.getPath()).willReturn(serverError()));
+
+    StormConfiguration configuration = new StormConfiguration();
+    configuration.urls = List.of(statusURI, errorURI);
+    configuration.stats = List.of(StatBuilder.values()).stream().map(sb->new StatBuilderParams(sb)).collect(Collectors.toList());
+    Category category = Storm.main(configuration);
+    assertNotNull(category);
+    System.out.println(category);
+
+  }
 
 
 }

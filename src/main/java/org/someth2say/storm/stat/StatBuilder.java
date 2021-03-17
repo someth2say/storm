@@ -11,6 +11,7 @@ public enum StatBuilder {
     DURATIONSUM(DurationSumStat::new), 
     ERRORS(ErrorsStat::new),
     HEADERS(HeadersStat::new), 
+    HTTPCODE(HttpCodeStat::new),
     ID(IdStat::new), 
     RELATIVECOUNT(RelativeCountStat::new),
     RELATIVEDURATION(RelativeDurationStat::new), 
