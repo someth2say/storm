@@ -11,21 +11,27 @@ import javax.inject.Inject;
 
 import org.apache.http.client.utils.URIBuilder;
 import org.eclipse.microprofile.config.ConfigProvider;
+import org.junit.Test;
 import org.someth2say.storm.category.Category;
 import org.someth2say.storm.configuration.StormConfiguration;
+import org.someth2say.storm.resources.HttpBinContainerTestResourceLifeCycleManager;
+import org.someth2say.storm.resources.WiremockTestResourceLifeCycleManager;
 
 import io.quarkus.test.common.QuarkusTestResource;
+import io.quarkus.test.junit.QuarkusTest;
 
-//@QuarkusTest
+@QuarkusTest
 @QuarkusTestResource(WiremockTestResourceLifeCycleManager.class)
+@QuarkusTestResource(HttpBinContainerTestResourceLifeCycleManager.class)
 public class StormQuarkusTest {
+
   @Inject
   StormConfiguration configuration;
 
   @Inject
   StormQuarkusApplication storm;
 
-  //@Test
+  @Test
   public void quarkusDefaultConfigAllGood() throws Exception {
 
     /*

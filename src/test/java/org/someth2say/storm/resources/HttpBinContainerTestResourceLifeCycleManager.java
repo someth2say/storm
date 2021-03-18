@@ -1,4 +1,4 @@
-package org.someth2say.storm;
+package org.someth2say.storm.resources;
 
 import java.net.URI;
 import java.net.URISyntaxException;

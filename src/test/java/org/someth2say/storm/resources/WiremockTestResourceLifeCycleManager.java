@@ -1,4 +1,4 @@
-package org.someth2say.storm;
+package org.someth2say.storm.resources;
 
 import java.util.Collections;
 import java.util.Map;
