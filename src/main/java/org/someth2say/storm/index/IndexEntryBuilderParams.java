@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 
 public abstract class IndexEntryBuilderParams<INDEX extends Enum<INDEX>> {
 
-    private static final Pattern pattern = Pattern.compile("([^(]+)(\\((.+)\\))?");
+    private static final Pattern pattern = Pattern.compile("([^(]+)(\\((.*)\\))?");
 
     public final INDEX indexEntry;
     public final String params;
@@ -35,11 +35,9 @@ public abstract class IndexEntryBuilderParams<INDEX extends Enum<INDEX>> {
             throw new IllegalArgumentException("Can not parse stat: "+buildParams);
         }
 
-        this.params = matcher.groupCount()>2?matcher.group(3):null;
-        this.paramsPresent = matcher.groupCount()>2 && !"~".equals(this.params);
-
-        String indexName = matcher.group(1);
-        indexEntry = Enum.valueOf(indexClass, indexName.toUpperCase());
+        this.indexEntry = Enum.valueOf(indexClass, matcher.group(1).toUpperCase());
+        this.paramsPresent = "~".equals(matcher.group(3)) || ( matcher.group(3) != null && !"".equals(matcher.group(3)));
+        this.params = this.paramsPresent ? matcher.group(3) : null;
 
     }
 
