@@ -9,6 +9,8 @@ import java.util.stream.Collectors;
 
 import org.eclipse.microprofile.config.spi.ConfigSource;
 import org.jboss.logging.Logger;
+import org.someth2say.storm.category.CategorizerIndex.CategorizerBuilderParams;
+import org.someth2say.storm.stat.StatIndex.StatBuilderParams;
 
 import io.quarkus.arc.config.ConfigProperties;
 import picocli.CommandLine;
@@ -47,7 +49,10 @@ public class PicocliConfigSource implements ConfigSource {
         PicocliConfigSource.args = args;
         PicocliConfigSource.configPrefix = configPrefix;
         PicocliConfigSource.positionalArgsName = positionalArgsName;
-        commandLine = new CommandLine(commandClass);
+        commandLine = new CommandLine(commandClass)
+            .registerConverter(CategorizerBuilderParams.class, s->new CategorizerBuilderParams(s))
+            .registerConverter(StatBuilderParams.class, s->new StatBuilderParams(s));
+
         buildMapFromArgs();
     }
 

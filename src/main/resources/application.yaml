@@ -37,7 +37,7 @@ storm:
   # duration: 1000
   # delay: 100
   categorizers:
-    - httpcode
+    - httpcode()
   #  - regexpmatch(.*( (a|the) ).*)
   # - body
   #  - header(server)

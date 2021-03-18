@@ -34,7 +34,7 @@ public class Category {
     @JsonIgnore
     public final Deque<ResponseData> responseDatas = new ConcurrentLinkedDeque<>();
     
-    public final Map<StatIndex.StatIndexEntryBuilderParams, Stat> stats;
+    public final Map<StatIndex.StatBuilderParams, Stat> stats;
     public final Map<Object, Category> categories = new LinkedHashMap<>();
 
     public Category(final StormConfiguration configuration, final Category parent) {

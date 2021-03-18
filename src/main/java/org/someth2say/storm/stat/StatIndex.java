@@ -24,24 +24,24 @@ public enum StatIndex {
         this.targetClass = targetClass;
     }
 
-    public static Stat build(final StatIndexEntryBuilderParams statBuilderParam) {
+    public static Stat build(final StatBuilderParams statBuilderParam) {
         if (statBuilderParam.paramsPresent)
             return IndexEntryBuilder.build(statBuilderParam.indexEntry.targetClass, statBuilderParam.params);
         return IndexEntryBuilder.build(statBuilderParam.indexEntry.targetClass);
     }
 
 
-    public static class StatIndexEntryBuilderParams extends IndexEntryBuilderParams<StatIndex>{
+    public static class StatBuilderParams extends IndexEntryBuilderParams<StatIndex>{
 
-        public StatIndexEntryBuilderParams(final StatIndex index) {
+        public StatBuilderParams(final StatIndex index) {
             super(index);
         }
 
-        public StatIndexEntryBuilderParams(final StatIndex index, final String param) {
+        public StatBuilderParams(final StatIndex index, final String param) {
             super(index,param);
         }   
 
-        public StatIndexEntryBuilderParams(final String param) {
+        public StatBuilderParams(final String param) {
             super(StatIndex.class, param);
         }   
 

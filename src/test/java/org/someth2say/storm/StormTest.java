@@ -21,7 +21,7 @@ import org.someth2say.storm.category.CategorizerIndex.CategorizerBuilderParams;
 import org.someth2say.storm.category.Category;
 import org.someth2say.storm.configuration.StormConfiguration;
 import org.someth2say.storm.stat.StatIndex;
-import org.someth2say.storm.stat.StatIndex.StatIndexEntryBuilderParams;
+import org.someth2say.storm.stat.StatIndex.StatBuilderParams;
 
 public class StormTest {
 
@@ -83,7 +83,7 @@ public class StormTest {
     configuration.urls = List.of(statusURI);
     configuration.count=1000;
     configuration.categorizers=List.of(new CategorizerBuilderParams(CategorizerIndex.TIMEHISTOGRAM,"1"));
-    configuration.stats = List.of(new StatIndexEntryBuilderParams(StatIndex.COUNT));
+    configuration.stats = List.of(new StatBuilderParams(StatIndex.COUNT));
     Category category = Storm.main(configuration);
     assertNotNull(category);
     System.out.println(category);
@@ -99,7 +99,7 @@ public class StormTest {
 
     StormConfiguration configuration = new StormConfiguration();
     configuration.urls = List.of(statusURI);
-    configuration.stats = List.of(new StatIndexEntryBuilderParams(StatIndex.COUNT));
+    configuration.stats = List.of(new StatBuilderParams(StatIndex.COUNT));
     Category category = Storm.main(configuration);
     assertNotNull(category);
     System.out.println(category);
@@ -116,7 +116,7 @@ public class StormTest {
     StormConfiguration configuration = new StormConfiguration();
     configuration.count=1000;
     configuration.urls = List.of(statusURI);
-    configuration.stats = List.of(new StatIndexEntryBuilderParams(StatIndex.DURATION));
+    configuration.stats = List.of(new StatBuilderParams(StatIndex.DURATION));
     Category category = Storm.main(configuration);
     assertNotNull(category);
 
@@ -132,9 +132,9 @@ public class StormTest {
     StormConfiguration configuration = new StormConfiguration();
     configuration.urls = List.of(statusURI);
     configuration.stats = List.of(
-      new StatIndexEntryBuilderParams(StatIndex.TIME), 
-      new StatIndexEntryBuilderParams(StatIndex.DURATION),
-      new StatIndexEntryBuilderParams(StatIndex.ID));
+      new StatBuilderParams(StatIndex.TIME), 
+      new StatBuilderParams(StatIndex.DURATION),
+      new StatBuilderParams(StatIndex.ID));
     Category category = Storm.main(configuration);
     assertNotNull(category);
     System.out.println(category);
@@ -151,7 +151,7 @@ public class StormTest {
 
     StormConfiguration configuration = new StormConfiguration();
     configuration.urls = List.of(statusURI);
-    configuration.stats = List.of(StatIndex.values()).stream().map(sb->new StatIndexEntryBuilderParams(sb)).collect(Collectors.toList());
+    configuration.stats = List.of(StatIndex.values()).stream().map(sb->new StatBuilderParams(sb)).collect(Collectors.toList());
     Category category = Storm.main(configuration);
 
     assertNotNull(category);
@@ -170,7 +170,7 @@ public class StormTest {
 
     StormConfiguration configuration = new StormConfiguration();
     configuration.urls = List.of(statusURI, errorURI);
-    configuration.stats = List.of(StatIndex.values()).stream().map(sb->new StatIndexEntryBuilderParams(sb)).collect(Collectors.toList());
+    configuration.stats = List.of(StatIndex.values()).stream().map(sb->new StatBuilderParams(sb)).collect(Collectors.toList());
     Category category = Storm.main(configuration);
     assertNotNull(category);
     System.out.println(category);
