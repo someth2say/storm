@@ -8,6 +8,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.net.URI;
 import java.util.List;
+import java.util.function.BinaryOperator;
+import java.util.function.Function;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
@@ -100,6 +103,22 @@ public class StormTest {
     Category category = Storm.main(configuration);
     assertNotNull(category);
     System.out.println(category);
+
+  }
+
+  @Test
+  public void singleStatWithParams() throws Exception {
+
+    URI wiremockURI = new URIBuilder(wireMockServer.baseUrl()).build();
+    URI statusURI = new URIBuilder(wiremockURI).setPath("/status").build();
+    stubFor(get(statusURI.getPath()).willReturn(ok()));
+
+    StormConfiguration configuration = new StormConfiguration();
+    configuration.count=1000;
+    configuration.urls = List.of(statusURI);
+    configuration.stats = List.of(new StatIndexEntryBuilderParams(StatIndex.DURATION));
+    Category category = Storm.main(configuration);
+    assertNotNull(category);
 
   }
 

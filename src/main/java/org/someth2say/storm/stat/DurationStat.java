@@ -16,6 +16,13 @@ public class DurationStat extends Stat {
     public double variance;
     public double stdev;
     public double confidence;
+    public double conficenceInterval=0.99;
+
+    public DurationStat(){ }
+
+    public DurationStat(final String confidenceInterval){ 
+        this.conficenceInterval=Double.parseDouble(confidenceInterval);
+    }
 
     @Override
     public synchronized void computeStep(Category bucket, ResponseData responseData) {
@@ -31,11 +38,10 @@ public class DurationStat extends Stat {
         if (numResponses > 0) {
             List<Long> durations = responses.stream().map(ResponseData::getDuration).map(Duration::toMillis)
                     .collect(Collectors.toList());
-            mean = durations.stream().reduce(0l, (d1, d2) -> d1 + d2) / numResponses;
-            variance = durations.stream().map(m -> m - mean).map(m -> m * m).reduce(0l, (d1, d2) -> d1 + d2);
-            stdev = Math.sqrt(variance / numResponses * 1.0);
-            confidence = 0.99 * (stdev / Math.sqrt(numResponses));
+            mean = durations.stream().reduce(0l, Long::sum) / numResponses;
+            variance = durations.stream().map(m -> m - mean).map(m -> m * m).reduce(0l, Long::sum) / numResponses;
+            stdev = Math.sqrt(variance);
+            confidence = conficenceInterval * (stdev / Math.sqrt(numResponses));
         }
     }
-
 }
