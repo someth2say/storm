@@ -24,7 +24,7 @@ public class IndexEntryBuilder {
             final Constructor<T> declaredConstructor = targetClass.getConstructor();
             return declaredConstructor.newInstance();
         } catch (InvocationTargetException e) {
-            throw new NoSuchMethodError("Constructor exception for class "+targetClass.getName()+"\n"+e.getMessage());
+            throw new NoSuchMethodError("No-param constructor exception for class "+targetClass.getName()+"\n"+e.getMessage());
         } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException e) {
             List<Method> factoryMethods = Arrays.asList(targetClass.getMethods()).stream()
             .filter(m->Modifier.isStatic(m.getModifiers()))
@@ -33,17 +33,18 @@ public class IndexEntryBuilder {
             .collect(Collectors.toList());
 
             if (factoryMethods.size()==0){
-                throw new NoSuchMethodError("No factory methods found for "+targetClass.getName());
+                throw new NoSuchMethodError("No no-params factory methods found for "+targetClass.getName());
             }
 
             if (factoryMethods.size()>1){
-                throw new NoSuchMethodError("Multiple potential factory methods for "+targetClass.getName());
+                throw new NoSuchMethodError("Multiple potential no-params factory methods for "+targetClass.getName());
             }
+            
+            Method method = factoryMethods.get(0);
             try {
-                Method method = factoryMethods.get(0);
                 return (T) method.invoke(null);
             } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
-                throw new NoSuchMethodError("Can not execute factory method.\n"+e1.getMessage());
+                throw new NoSuchMethodError("Can not execute no-params factory method "+method.getName()+".\n"+e1.getMessage());
 
             }
         }
@@ -54,7 +55,7 @@ public class IndexEntryBuilder {
                 final Constructor<T> declaredConstructor = targetClass.getConstructor(String.class);
                 return declaredConstructor.newInstance(params);
             } catch (InvocationTargetException e) {
-                throw new NoSuchMethodError("Constructor exception for class "+targetClass.getName()+"\n"+e.getMessage());
+                throw new NoSuchMethodError("Single-param constructor exception for class "+targetClass.getName()+"\n"+e.getMessage());
             } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException e) {
                 List<Method> factoryMethods = Arrays.asList(targetClass.getMethods()).stream()
                     .filter(m->Modifier.isStatic(m.getModifiers()))
@@ -63,16 +64,17 @@ public class IndexEntryBuilder {
                     .filter(m->(m.getParameterTypes()[0].isAssignableFrom(String.class)))
                     .collect(Collectors.toList());
                 if (factoryMethods.size()==0){
-                    throw new NoSuchMethodError("No factory methods found for "+targetClass.getName());
+                    throw new NoSuchMethodError("No single-param factory methods found for "+targetClass.getName());
                 }
 
                 if (factoryMethods.size()>1){
-                    throw new NoSuchMethodError("Multiple potential factory methods for "+targetClass.getName());
+                    throw new NoSuchMethodError("Multiple potential single-param factory methods for "+targetClass.getName());
                 }
+                Method method = factoryMethods.get(0);
                 try {
-                    return (T) factoryMethods.get(0).invoke(null, params);
+                    return (T) method.invoke(null, params);
                 } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
-                    throw new NoSuchMethodError("Can not execute factory method.\n"+e1.getMessage());
+                    throw new NoSuchMethodError("Can not execute factory method "+method.getName()+".\n"+e1.getMessage());
                 }
             }
 
