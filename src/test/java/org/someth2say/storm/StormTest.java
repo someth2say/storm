@@ -1,6 +1,9 @@
 package org.someth2say.storm;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.ok;
+import static com.github.tomakehurst.wiremock.client.WireMock.serverError;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.net.URI;
@@ -13,12 +16,12 @@ import org.apache.http.client.utils.URIBuilder;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.someth2say.storm.category.CategorizerBuilder;
-import org.someth2say.storm.category.CategorizerBuilderParams;
+import org.someth2say.storm.category.CategorizerIndex;
+import org.someth2say.storm.category.CategorizerIndex.CategorizerBuilderParams;
 import org.someth2say.storm.category.Category;
 import org.someth2say.storm.configuration.StormConfiguration;
-import org.someth2say.storm.stat.StatBuilder;
-import org.someth2say.storm.stat.StatBuilderParams;
+import org.someth2say.storm.stat.StatIndex;
+import org.someth2say.storm.stat.StatIndex.StatIndexEntryBuilderParams;
 
 public class StormTest {
 
@@ -59,10 +62,28 @@ public class StormTest {
 
     StormConfiguration configuration = new StormConfiguration();
     configuration.urls = List.of(statusURI);
-    configuration.categorizers=List.of(new CategorizerBuilderParams(CategorizerBuilder.HTTPCODE,""));
+    configuration.categorizers=List.of(new CategorizerBuilderParams(CategorizerIndex.HTTPCODE));
 
     Category category = Storm.main(configuration);
     assertNotNull(category);
+
+  }
+
+  @Test
+  public void parameterizedCategorizer() throws Exception {
+
+    URI wiremockURI = new URIBuilder(wireMockServer.baseUrl()).build();
+    URI statusURI = new URIBuilder(wiremockURI).setPath("/status").build();
+    stubFor(get(statusURI.getPath()).willReturn(ok()));
+
+    StormConfiguration configuration = new StormConfiguration();
+    configuration.urls = List.of(statusURI);
+    configuration.count=1000;
+    configuration.categorizers=List.of(new CategorizerBuilderParams(CategorizerIndex.TIMEHISTOGRAM,"1"));
+    configuration.stats = List.of(new StatIndexEntryBuilderParams(StatIndex.COUNT));
+    Category category = Storm.main(configuration);
+    assertNotNull(category);
+    System.out.println(category);
 
   }
 
@@ -75,7 +96,7 @@ public class StormTest {
 
     StormConfiguration configuration = new StormConfiguration();
     configuration.urls = List.of(statusURI);
-    configuration.stats = List.of(new StatBuilderParams(StatBuilder.COUNT));
+    configuration.stats = List.of(new StatIndexEntryBuilderParams(StatIndex.COUNT));
     Category category = Storm.main(configuration);
     assertNotNull(category);
     System.out.println(category);
@@ -92,9 +113,9 @@ public class StormTest {
     StormConfiguration configuration = new StormConfiguration();
     configuration.urls = List.of(statusURI);
     configuration.stats = List.of(
-      new StatBuilderParams(StatBuilder.TIME), 
-      new StatBuilderParams(StatBuilder.DURATION),
-      new StatBuilderParams(StatBuilder.ID));
+      new StatIndexEntryBuilderParams(StatIndex.TIME), 
+      new StatIndexEntryBuilderParams(StatIndex.DURATION),
+      new StatIndexEntryBuilderParams(StatIndex.ID));
     Category category = Storm.main(configuration);
     assertNotNull(category);
     System.out.println(category);
@@ -111,14 +132,13 @@ public class StormTest {
 
     StormConfiguration configuration = new StormConfiguration();
     configuration.urls = List.of(statusURI);
-    configuration.stats = List.of(StatBuilder.values()).stream().map(sb->new StatBuilderParams(sb)).collect(Collectors.toList());
+    configuration.stats = List.of(StatIndex.values()).stream().map(sb->new StatIndexEntryBuilderParams(sb)).collect(Collectors.toList());
     Category category = Storm.main(configuration);
+
     assertNotNull(category);
     System.out.println(category);
 
   }
-
-
 
   @Test
   public void twoURLs() throws Exception {
@@ -131,7 +151,7 @@ public class StormTest {
 
     StormConfiguration configuration = new StormConfiguration();
     configuration.urls = List.of(statusURI, errorURI);
-    configuration.stats = List.of(StatBuilder.values()).stream().map(sb->new StatBuilderParams(sb)).collect(Collectors.toList());
+    configuration.stats = List.of(StatIndex.values()).stream().map(sb->new StatIndexEntryBuilderParams(sb)).collect(Collectors.toList());
     Category category = Storm.main(configuration);
     assertNotNull(category);
     System.out.println(category);

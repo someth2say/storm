@@ -4,11 +4,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import org.someth2say.storm.category.CategorizerBuilder;
+import org.someth2say.storm.category.CategorizerIndex;
 import org.someth2say.storm.configuration.StormConfiguration;
 import org.someth2say.storm.configuration.FileConfigurationSource;
 import org.someth2say.storm.configuration.PicocliConfigSource;
-import org.someth2say.storm.stat.StatBuilder;
+import org.someth2say.storm.stat.StatIndex;
 
 import io.quarkus.runtime.Quarkus;
 import io.quarkus.runtime.annotations.QuarkusMain;
@@ -51,8 +51,8 @@ public class StormMain {
     private static void printHelp(final CommandLine commandLine) {
         commandLine.usage(System.out);
         System.out.println();
-        System.out.println("Available categorizers: " + List.of(CategorizerBuilder.values()));
-        System.out.println("Available stats: " + List.of(StatBuilder.values()));
+        System.out.println("Available categorizers: " + List.of(CategorizerIndex.values()));
+        System.out.println("Available stats: " + List.of(StatIndex.values()));
     }
 
     public static void exitHandler(Integer exitCode, Throwable exception) {

@@ -14,8 +14,8 @@ import javax.validation.constraints.Positive;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import org.someth2say.storm.category.CategorizerBuilderParams;
-import org.someth2say.storm.stat.StatBuilderParams;
+import org.someth2say.storm.category.CategorizerIndex.CategorizerBuilderParams;
+import org.someth2say.storm.stat.StatIndex.StatIndexEntryBuilderParams;
 import org.someth2say.storm.utils.SerializationUtils;
 
 import io.quarkus.arc.config.ConfigProperties;
@@ -65,7 +65,7 @@ public class StormConfiguration {
     public Collection<CategorizerBuilderParams> categorizers = Collections.emptyList();
 
     @Option(names = {"-s", "--stats"}, description = "Stats generated for each category bucket.")
-    public Collection<StatBuilderParams> stats = Collections.emptyList();
+    public Collection<StatIndexEntryBuilderParams> stats = Collections.emptyList();
 
     @Positive
     @Option(names = {"--delay"}, description = "Delay time after a response")

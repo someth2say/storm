@@ -10,18 +10,18 @@ import org.someth2say.storm.category.Category;
 
 public class DurationStat extends Stat {
 
-    public Duration minDuration = Duration.ZERO;
-    public Duration maxDuration = Duration.ZERO;
-    public Duration mean = Duration.ZERO;
+    public Long minDuration = Long.MAX_VALUE;
+    public Long maxDuration = Long.MIN_VALUE;
+    public Long mean;
     public double variance;
     public double stdev;
+    public double confidence;
 
-    
     @Override
     public synchronized void computeStep(Category bucket, ResponseData responseData) {
-        Duration responseDuration = responseData.getDuration();
-        minDuration = (minDuration == Duration.ZERO || minDuration.compareTo(responseDuration) > 0) ? responseDuration : minDuration;
-        maxDuration = maxDuration.compareTo(responseDuration) < 0 ? responseDuration : maxDuration;
+        long responseDuration = responseData.getDuration().toMillis();
+        minDuration = Math.min(minDuration, responseDuration);
+        maxDuration = Math.max(maxDuration, responseDuration);
     }
 
     @Override
@@ -29,12 +29,12 @@ public class DurationStat extends Stat {
         Collection<ResponseData> responses = bucket.responseDatas;
         int numResponses = responses.size();
         if (numResponses > 0) {
-            List<Duration> durations = responses.stream().map(ResponseData::getDuration)
+            List<Long> durations = responses.stream().map(ResponseData::getDuration).map(Duration::toMillis)
                     .collect(Collectors.toList());
-            mean = durations.stream().reduce(Duration.ZERO, (d1, d2) -> d1.plus(d2)).dividedBy(numResponses);
-            variance = durations.stream().mapToLong(d -> d.toMillis()).map(m -> m - mean.toMillis()).map(m -> m * m)
-                    .sum(); // /1000;
-            stdev = Math.sqrt(variance / numResponses*1.0);
+            mean = durations.stream().reduce(0l, (d1, d2) -> d1 + d2) / numResponses;
+            variance = durations.stream().map(m -> m - mean).map(m -> m * m).reduce(0l, (d1, d2) -> d1 + d2);
+            stdev = Math.sqrt(variance / numResponses * 1.0);
+            confidence = 0.99 * (stdev / Math.sqrt(numResponses));
         }
     }
 
