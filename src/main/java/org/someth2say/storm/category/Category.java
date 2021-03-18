@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import org.jboss.logging.Logger;
@@ -33,7 +34,7 @@ public class Category {
 
     @JsonIgnore
     public final Deque<ResponseData> responseDatas = new ConcurrentLinkedDeque<>();
-    
+
     public final Map<StatIndex.StatBuilderParams, Stat> stats;
     public final Map<Object, Category> categories = new LinkedHashMap<>();
 

@@ -5,11 +5,13 @@ import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.Map;
 
+import org.jboss.logging.Logger;
 import org.testcontainers.containers.GenericContainer;
 
 import io.quarkus.test.common.QuarkusTestResourceLifecycleManager;
 
 public class HttpBinContainerTestResourceLifeCycleManager implements QuarkusTestResourceLifecycleManager {
+    private static final Logger LOG = Logger.getLogger(HttpBinContainerTestResourceLifeCycleManager.class);
 
     public static final String IP = "httpbin.address";
     public static final String PORT = "httpbin.port";
@@ -18,16 +20,22 @@ public class HttpBinContainerTestResourceLifeCycleManager implements QuarkusTest
 
     @Override
     public Map<String, String> start() {
+        LOG.info("Starting HTTPBIN container.");
         httpBinContainer.start();
+        LOG.info("HTTPBIN container ready.");
         return  Collections.unmodifiableMap(Map.of(
             PORT, httpBinContainer.getMappedPort(80).toString(),
-            IP, httpBinContainer.getContainerIpAddress())
+            IP, httpBinContainer.getContainerIpAddress(),
+            "storm.urls",getURI("http", "/get").toString()
+            )
         );
     }
 
     @Override
     public void stop() {
+        LOG.info("Stopping HTTPBIN container.");
         httpBinContainer.stop();
+        LOG.info("HTTPBIN container stopped.");
     }
 
     public static URI getURI(final String scheme, final String path) {
