@@ -95,6 +95,8 @@ public class Storm {
         final HttpClient httpClient = buildHttpClient(configuration);
         final int nThreads = configuration.threads != null ? configuration.threads
                 : Runtime.getRuntime().availableProcessors();
+        LOG.debugf("Concurrency set to %d",nThreads);
+
         final ExecutorService pool = Executors.newFixedThreadPool(nThreads);
 
         int repeat;
@@ -111,27 +113,28 @@ public class Storm {
         RequestBuilder requestBuilder = new RequestBuilder(configuration);
 
         final long end = System.currentTimeMillis() + time;
-        LOG.warnf("Starting at %d, planned end at %s", System.currentTimeMillis(), end);
+        LOG.debugf("Starting at %d, planned end at %s", System.currentTimeMillis(), end);
         int maxQueueSize = 0;
         while (System.currentTimeMillis() < end && repeat-- > 0) {
             final int queueSize = ((ThreadPoolExecutor) pool).getQueue().size();
             maxQueueSize = Math.max(maxQueueSize, queueSize);
             if (queueSize > 1000) {
-                LOG.warnf("Queue size too big! %d", queueSize);
+                LOG.debugf("Queue size too big! %d", queueSize);
                 Thread.sleep(100);
             }
             pool.submit(new StormCallable(rootCategory, configuration, httpClient, requestBuilder));
         }
+        
         pool.shutdown();
 
         final long await = Math.max(end - System.currentTimeMillis(), 0);
-        LOG.warnf("Shutdown at %s. Awaiting for termination %d millis", System.currentTimeMillis(), await);
+        LOG.debugf("Shutdown at %s. Awaiting for termination %d millis", System.currentTimeMillis(), await);
         if (!pool.awaitTermination(await, TimeUnit.MILLISECONDS)) {
             LOG.warnf("Termination failed. Shutting down now! %d", System.currentTimeMillis());
             pool.shutdownNow();
             pool.awaitTermination(30, TimeUnit.SECONDS);
         }
-        LOG.warnf("Stopping at %d. Max queue size: %d", System.currentTimeMillis(), maxQueueSize);
+        LOG.debugf("Stopping at %d. Max queue size: %d", System.currentTimeMillis(), maxQueueSize);
     }
 
     private void executeReactiveRequests(final Category rootCategory, final StormConfiguration configuration) {

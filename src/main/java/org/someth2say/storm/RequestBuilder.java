@@ -3,14 +3,16 @@ package org.someth2say.storm;
 import java.net.URI;
 import java.net.http.HttpRequest;
 import java.time.Duration;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.jboss.logging.Logger;
 import org.someth2say.storm.configuration.StormConfiguration;
 
 public class RequestBuilder {
+	private static final Logger LOG = Logger.getLogger(RequestBuilder.class);
 
     private final StormConfiguration configuration;
     private final AtomicInteger requestCounter = new AtomicInteger();
@@ -18,7 +20,7 @@ public class RequestBuilder {
 
     public RequestBuilder(final StormConfiguration configuration) {
         this.configuration = configuration;
-        builderCache = new HashMap<>(configuration.urls.size());
+        builderCache = new ConcurrentHashMap<>(configuration.urls.size());
     }
 
     public RequestData getNextRequest() {
@@ -29,7 +31,8 @@ public class RequestBuilder {
         URI nextURL = this.configuration.order.getNextURI(urls, repeat, count);
 
         HttpRequest.Builder httpRequestBuilder = builderCache.computeIfAbsent(nextURL, this::buildHttpRequestBuilder);
-        return new RequestData(count, httpRequestBuilder.build());
+        RequestData requestData = new RequestData(count, httpRequestBuilder.build());
+        return requestData;
     }
 
     private HttpRequest.Builder buildHttpRequestBuilder(final URI uri) {
